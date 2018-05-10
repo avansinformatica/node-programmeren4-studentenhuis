@@ -89,11 +89,10 @@ INSERT INTO `maaltijd` (Naam, Beschrijving, Ingredienten, Allergie, Prijs, UserI
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `deelnemers` ;
 CREATE TABLE IF NOT EXISTS `deelnemers` (
-	`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`UserID` INT UNSIGNED NOT NULL,
 	`StudentenhuisID` INT UNSIGNED NOT NULL,
 	`MaaltijdID` INT UNSIGNED NOT NULL,
-	PRIMARY KEY (`ID`)
+	PRIMARY KEY (`UserID`, `StudentenhuisID`, `MaaltijdID`)
 ) 
 ENGINE = InnoDB;
 
@@ -112,6 +111,44 @@ ON DELETE NO ACTION
 ON UPDATE CASCADE;
 
 -- Voorbeeld insert query.
-INSERT INTO `deelnemers` (UserID, StudentenhuisID, MaaltijdID) VALUES 
-(1, 1, 1);
+-- Let op: je kunt je maar één keer aanmelden voor een maaltijd in een huis.
+-- Je kunt je natuurlijk wel afmelden en opnieuw aanmelden. .
+INSERT INTO `deelnemers` (UserID, StudentenhuisID, MaaltijdID) VALUES (1, 1, 1);
+-- Voorbeeld van afmelden:
+DELETE FROM `deelnemers` WHERE UserID = 1 AND StudentenhuisID = 1 AND MaaltijdID = 1;
+-- En opnieuw aanmelden:
+INSERT INTO `deelnemers` (UserID, StudentenhuisID, MaaltijdID) VALUES (1, 1, 1);
+
+-- -----------------------------------------------------
+-- View om deelnemers bij een maaltijd in een studentenhuis in te zien.
+-- 
+-- -----------------------------------------------------
+CREATE OR REPLACE VIEW `view_studentenhuis` AS 
+SELECT 
+	`studentenhuis`.`ID`,
+	`studentenhuis`.`Naam`,
+	`studentenhuis`.`Adres`,
+	CONCAT(`user`.`Firstname`, ' ', `user`.`Lastname`) AS `Admin`,
+	`user`.`Email`
+FROM `studentenhuis`
+LEFT JOIN `user` ON `studentenhuis`.`UserID` = `user`.`ID`;
+
+SELECT * FROM `view_studentenhuis`;
+
+-- -----------------------------------------------------
+-- View om deelnemers bij een maaltijd in een studentenhuis in te zien.
+-- 
+-- -----------------------------------------------------
+CREATE OR REPLACE VIEW `view_deelnemers` AS 
+SELECT 
+	`deelnemers`.`StudentenhuisID`,
+	`deelnemers`.`MaaltijdID`,
+	`user`.`Firstname`,
+	`user`.`Lastname`,
+	`user`.`Email`
+FROM `deelnemers`
+LEFT JOIN `user` ON `deelnemers`.`UserID` = `user`.`ID`;
+
+-- Voorbeeldquery.
+SELECT * from `view_deelnemers` WHERE StudentenhuisID = 1 AND MaaltijdID = 1; 
 

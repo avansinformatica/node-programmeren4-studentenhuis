@@ -43,28 +43,23 @@ module.exports = {
      * Haal alle items op voor de user met gegeven id. 
      * De user ID zit in het request na validatie! 
      */
-    getAllForUser(req, res, next) {
-        try {
-            assert(req.user && req.user.id, 'User ID is missing!')
-        } catch (ex) {
-            const error = new ApiError(ex.toString(), 500)
-            next(error)
-            return
-        }
+    getAll(req, res, next) {
 
-        db.query('SELECT * FROM studentenhuis WHERE UserID = ?', [req.user.id],
-            (err, rows, fields) => {
-                if (err) {
-                    const error = new ApiError(err, 412)
-                    next(error);
-                }
-                if (rows.length === 0) {
-                    const error = new ApiError('This user has not created any studentenhuis. Create one first.', 404)
-                    next(error);
-                } else {
-                    res.status(200).json(rows).end()
-                }
-            })
+        try {
+            db.query('SELECT * FROM view_studentenhuis',
+                (err, rows, fields) => {
+                    if (err) {
+                        const error = new ApiError(err, 412)
+                        next(error);
+                    } else {
+                        res.status(200).json(rows).end()
+                    }
+                })
+        } catch (ex) {
+            console.log(ex)
+            const error = new ApiError(ex, 412)
+            next(error);
+        }
     },
 
     /**
@@ -74,26 +69,27 @@ module.exports = {
     getById(req, res, next) {
         try {
             assert(req.params.huisId, 'ID is missing!')
-            assert(req.user && req.user.id, 'User ID is missing!')
         } catch (ex) {
             const error = new ApiError(ex.toString(), 500)
             next(error)
             return
         }
 
-        db.query('SELECT * FROM studentenhuis WHERE ID = ? AND UserID = ?', [req.params.huisId, req.user.id],
-            (err, rows, fields) => {
-                if (err) {
-                    const error = new ApiError(err, 412)
-                    next(error);
-                }
-                if (rows.length === 0) {
-                    const error = new ApiError('No access to this studentenhuis. Create one yourself!', 404)
-                    next(error);
-                } else {
-                    res.status(200).json(rows[0]).end()
-                }
-            })
+        try {
+            db.query('SELECT * FROM view_studentenhuis WHERE ID = ?', [req.params.huisId],
+                (err, rows, fields) => {
+                    if (err) {
+                        const error = new ApiError(err, 412)
+                        next(error);
+                    } else {
+                        res.status(200).json(rows[0]).end()
+                    }
+                })
+        } catch (ex) {
+            console.log(ex)
+            const error = new ApiError(ex, 412)
+            next(error);
+        }
     },
 
     /**
