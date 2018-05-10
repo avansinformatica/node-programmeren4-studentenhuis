@@ -38,11 +38,7 @@ class User {
         }
         this.email = email.trim()
         // Encrypt the password - never store a password as plain text!
-        // this.password = bcrypt.hashSync(password.trim(), 8); // Synchronous version
-        bcrypt.hash(password.trim(), 8, (err, hash) => { // Asynchronous version
-            if (err) throw (new ApiError(err.toString(), 500))
-            if (hash) this.password = hash
-        })
+        this.password = bcrypt.hashSync(password.trim(), 8); // Synchronous version
     }
 
     // Other class functions here

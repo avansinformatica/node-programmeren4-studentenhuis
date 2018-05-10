@@ -19,13 +19,14 @@ CREATE TABLE IF NOT EXISTS `user` (
 	`Firstname` VARCHAR(32) NOT NULL,
 	`Lastname` VARCHAR(32) NOT NULL,
 	`Email` VARCHAR(32) NOT NULL,
-	`Password` VARCHAR(32) NOT NULL,
+	`Password` CHAR(64) NOT NULL,
 	PRIMARY KEY (`ID`)
 ) 
 ENGINE = InnoDB;
 
 -- Voorbeeld insert query. Wanneer je in Nodejs de ? variant gebruikt hoeven de '' niet om de waarden.
 -- Zet die dan wel in het array er na, in de goede volgorde.
+-- In je Nodejs app zou het password wel encrypted moeten worden.
 INSERT INTO `user` (Firstname, Lastname, Email, Password) VALUES ('Jan', 'Smit', 'jsmit@server.nl', 'secret');
 
 -- -----------------------------------------------------
@@ -34,13 +35,22 @@ INSERT INTO `user` (Firstname, Lastname, Email, Password) VALUES ('Jan', 'Smit',
 DROP TABLE IF EXISTS `studentenhuis` ;
 CREATE TABLE IF NOT EXISTS `studentenhuis` (
 	`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	`Titel` VARCHAR(32) NOT NULL,
-	`Beschrijving` VARCHAR(1000) NOT NULL,
-	`Status` ENUM('OPEN','GEANNULEERD','AFGEROND') NOT NULL DEFAULT 'OPEN',
-	`LaatstGewijzigdOp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`Naam` VARCHAR(32) NOT NULL,
+	`Adres` VARCHAR(32) DEFAULT 'hier het adres',
+	`UserID` INT UNSIGNED NOT NULL,
 	PRIMARY KEY (`ID`)
 ) 
 ENGINE = InnoDB;
+
+ALTER TABLE `studentenhuis` 
+ADD CONSTRAINT `fk_studentenhuis_user`
+FOREIGN KEY (`UserID`) REFERENCES `user` (`ID`)
+ON DELETE NO ACTION
+ON UPDATE CASCADE;
+
+-- Voorbeeld insert query. Wanneer je in Nodejs de ? variant gebruikt hoeven de '' niet om de waarden.
+INSERT INTO `studentenhuis` (Naam, Adres, UserID) VALUES ('Lovensdijk', 'Lovensdijkstraat, Breda', 1);
+
 
 
 

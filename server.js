@@ -3,6 +3,7 @@ const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const user_routes = require('./routes/user.routes')
 const authenticationroutes = require('./routes/authentication.routes')
+const studentenhuisroutes = require('./routes/studentenhuis.routes')
 const AuthController = require('./controllers/authentication.controller')
 const ApiError = require('./model/ApiError')
 const settings = require('./config/config')
@@ -35,6 +36,7 @@ app.all('*', AuthController.validateToken);
 
 // Regular endpoints
 app.use('/api', user_routes)
+app.use('/api', studentenhuisroutes)
 
 // Postprocessing; catch all non-existing endpoint requests
 app.use('*', function (req, res, next) {

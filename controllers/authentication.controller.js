@@ -47,7 +47,9 @@ module.exports = {
                  * In this way, every next express handler has access to it - and could do 
                  * something smart with it.  
                  */
-                req.user = payload.sub
+                req.user = {
+                    id: payload.sub.id
+                }
                 next()
             }
         })
@@ -80,32 +82,39 @@ module.exports = {
             return
         }
 
-        // Verify that the email exists and that the password matches the email.
-        Userlist.getByEmail(req.body.email, (err, result) => {
-            // console.log(result.toString())
+        db.query('SELECT `ID`, `Email`, `Password` FROM user WHERE Email = ?', [req.body.email], (err, rows, fields) => {
             if (err) {
-                // Email does not exist
-                next(new ApiError('Invalid credentials, bye.', 401))
+                const error = new ApiError(err, 500)
+                next(error);
             } else {
-                bcrypt.compare(req.body.password.trim(), result.password, (err, success) => {
-                    if (success) {
-                        // console.log('passwords DID match, sending valid token')
-                        // Create an object containing the data we want in the payload.
-                        const payload = {
-                            user: result.email,
-                            role: 'admin, user'
+                // Login kan alleen als het emailadres bestaat
+                // Was er een resultaat? Zo ja, check het password.
+                // console.log('Result from database: ')
+                // console.dir(rows)
+                // console.log('password = ' + rows[0].Password)
+                if (rows && rows.length === 1 && rows[0].Email !== undefined) {
+                    bcrypt.compare(req.body.password, rows[0].Password, (err, success) => {
+                        if (success) {
+                            console.log('passwords DID match, sending valid token')
+                            // Create an object containing the data we want in the payload.
+                            const payload = {
+                                user: rows[0].Email,
+                                id: rows[0].ID
+                            }
+                            // Userinfo returned to the caller.
+                            const userinfo = {
+                                token: auth.encodeToken(payload),
+                                email: rows[0].Email
+                            }
+                            res.status(200).json(userinfo).end()
+                        } else {
+                            next(new ApiError('Password did not match.', 401))
                         }
-                        // Userinfo returned to the caller.
-                        const userinfo = {
-                            token: auth.encodeToken(payload),
-                            email: result.email
-                        }
-                        res.status(200).json(userinfo).end()
-                    } else {
-                        // console.log('passwords DID NOT match')
-                        next(new ApiError('Invalid credentials, bye.', 401))
-                    }
-                })
+                    })
+                } else {
+                    next(new ApiError('Email does not exist.', 401))
+                }
+
             }
         })
     },
@@ -133,14 +142,7 @@ module.exports = {
             return
         }
 
-        const user = new User(
-            req.body.firstname,
-            req.body.lastname,
-            req.body.email,
-            req.body.password
-        )
-
-        db.query('SELECT `Email` FROM user WHERE Email = ?', [user.email], (err, rows, fields) => {
+        db.query('SELECT `Email` FROM user WHERE Email = ?', [req.body.email], (err, rows, fields) => {
             if (err) {
                 const error = new ApiError(err, 412)
                 next(error);
@@ -149,26 +151,28 @@ module.exports = {
                 // console.dir(rows)
 
                 if (rows.length > 0) {
-                    const error = new ApiError('Email exists', 412)
+                    const error = new ApiError('Email already exists', 412)
                     next(error);
                 } else {
 
-                    // console.dir(user)
+                    const user = new User(
+                        req.body.firstname,
+                        req.body.lastname,
+                        req.body.email,
+                        req.body.password
+                    )
+                    console.dir(user)
 
                     db.query('INSERT INTO `user` (Firstname, Lastname, Email, Password) VALUES (?, ?, ?, ?)', [user.name.firstname, user.name.lastname, user.email, user.password],
                         (err, rows, fields) => {
-                            // console.log('after insert:')
-                            // console.log(err)
-                            // console.log(rows)
                             if (err) {
                                 const error = new ApiError(err, 412)
                                 next(error);
                             } else {
-
                                 // Create an object containing the data we want in the payload.
                                 const payload = {
                                     user: user.email,
-                                    role: 'admin, user'
+                                    id: rows.insertId
                                 }
                                 // Userinfo returned to the caller.
                                 const userinfo = {
