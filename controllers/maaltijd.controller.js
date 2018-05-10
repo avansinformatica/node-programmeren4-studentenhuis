@@ -98,7 +98,7 @@ module.exports = {
             const huisId = req.params.huisId
             const maaltijdId = req.params.maaltijdId
             const userId = req.user.id
-            const query = 'SELECT * FROM maaltijd WHERE UserID = ? AND StudentenhuisID = ? AND ID = ?'
+            const query = 'SELECT Naam, Beschrijving, Ingredienten, Allergie, Prijs FROM maaltijd WHERE UserID = ? AND StudentenhuisID = ? AND ID = ?'
             const values = [userId, huisId, maaltijdId]
             db.query(query, values,
                 (err, rows, fields) => {

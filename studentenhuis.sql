@@ -51,7 +51,6 @@ ON UPDATE CASCADE;
 -- Voorbeeld insert query. Wanneer je in Nodejs de ? variant gebruikt hoeven de '' niet om de waarden.
 INSERT INTO `studentenhuis` (Naam, Adres, UserID) VALUES ('Lovensdijk', 'Lovensdijkstraat, Breda', 1);
 
-
 -- -----------------------------------------------------
 -- Table `maaltijd`
 -- -----------------------------------------------------
@@ -82,4 +81,37 @@ ON UPDATE CASCADE;
 -- Voorbeeld insert query.
 INSERT INTO `maaltijd` (Naam, Beschrijving, Ingredienten, Allergie, Prijs, UserID, StudentenhuisID) VALUES 
 ('Zuurkool met worst', 'Zuurkool a la Montizaan, specialiteit van het huis.', 'Zuurkool, worst, spekjes', 'Lactose, gluten', 5, 1, 1);
+
+-- -----------------------------------------------------
+-- Table `deelnemers`
+-- Bevat de users die deelnemen aan een maaltijd in een studentenhuis.
+-- 
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `deelnemers` ;
+CREATE TABLE IF NOT EXISTS `deelnemers` (
+	`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`UserID` INT UNSIGNED NOT NULL,
+	`StudentenhuisID` INT UNSIGNED NOT NULL,
+	`MaaltijdID` INT UNSIGNED NOT NULL,
+	PRIMARY KEY (`ID`)
+) 
+ENGINE = InnoDB;
+
+ALTER TABLE `deelnemers` 
+ADD CONSTRAINT `fk_deelnemers_user`
+FOREIGN KEY (`UserID`) REFERENCES `user` (`ID`)
+ON DELETE NO ACTION
+ON UPDATE CASCADE,
+ADD CONSTRAINT `fk_deelnemers_studentenhuis`
+FOREIGN KEY (`StudentenhuisID`) REFERENCES `studentenhuis` (`ID`)
+ON DELETE NO ACTION
+ON UPDATE CASCADE,
+ADD CONSTRAINT `fk_deelnemers_maaltijd`
+FOREIGN KEY (`MaaltijdID`) REFERENCES `maaltijd` (`ID`)
+ON DELETE NO ACTION
+ON UPDATE CASCADE;
+
+-- Voorbeeld insert query.
+INSERT INTO `deelnemers` (UserID, StudentenhuisID, MaaltijdID) VALUES 
+(1, 1, 1);
 
