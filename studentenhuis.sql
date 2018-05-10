@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 	`Firstname` VARCHAR(32) NOT NULL,
 	`Lastname` VARCHAR(32) NOT NULL,
 	`Email` VARCHAR(32) NOT NULL,
-	`Password` CHAR(64) NOT NULL,
+	`Password` CHAR(64) BINARY NOT NULL,
 	PRIMARY KEY (`ID`)
 ) 
 ENGINE = InnoDB;
@@ -52,21 +52,34 @@ ON UPDATE CASCADE;
 INSERT INTO `studentenhuis` (Naam, Adres, UserID) VALUES ('Lovensdijk', 'Lovensdijkstraat, Breda', 1);
 
 
+-- -----------------------------------------------------
+-- Table `maaltijd`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `maaltijd` ;
+CREATE TABLE IF NOT EXISTS `maaltijd` (
+	`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`Naam` VARCHAR(32) NOT NULL,
+	`Beschrijving` VARCHAR(64) NOT NULL,
+	`Ingredienten` VARCHAR(64) NOT NULL,
+	`Allergie` VARCHAR(32) NOT NULL,
+	`Prijs` INT UNSIGNED  NOT NULL,
+	`UserID` INT UNSIGNED NOT NULL,
+	`StudentenhuisID` INT UNSIGNED NOT NULL,
+	PRIMARY KEY (`ID`)
+) 
+ENGINE = InnoDB;
 
+ALTER TABLE `maaltijd` 
+ADD CONSTRAINT `fk_maaltijd_user`
+FOREIGN KEY (`UserID`) REFERENCES `user` (`ID`)
+ON DELETE NO ACTION
+ON UPDATE CASCADE,
+ADD CONSTRAINT `fk_maaltijd_studentenhuis`
+FOREIGN KEY (`StudentenhuisID`) REFERENCES `studentenhuis` (`ID`)
+ON DELETE NO ACTION
+ON UPDATE CASCADE;
 
+-- Voorbeeld insert query.
+INSERT INTO `maaltijd` (Naam, Beschrijving, Ingredienten, Allergie, Prijs, UserID, StudentenhuisID) VALUES 
+('Zuurkool met worst', 'Zuurkool a la Montizaan, specialiteit van het huis.', 'Zuurkool, worst, spekjes', 'Lactose, gluten', 5, 1, 1);
 
-
-
-
-
-
-
-
-
-
-
--- INSERT INTO `users` (`Titel`,`Beschrijving`) VALUES
--- ('Boodschappen halen', 'Niet vergeten om boodschappen te halen'),
--- ('Huiswerk maken', 'Oefenen met Node.js, MySql en Git!'),
--- ('Sporten', 'Ook belangrijk'),
--- ('Netflixen', 'Fargo nog kijken!');

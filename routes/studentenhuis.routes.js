@@ -1,15 +1,26 @@
 //
-// Person.routes.js
+// routes.js
 //
 let routes = require('express').Router()
-let StudentenhuisController = require('../controllers/studentenhuis.controller')
+const StudentenhuisController = require('../controllers/studentenhuis.controller')
+const MaaltijdController = require('../controllers/maaltijd.controller')
 
-// hier schrijven we router endpoints
+/** 
+ * studentenhuis routes 
+ */
 routes.get('/studentenhuis', StudentenhuisController.getAllForUser)
 routes.post('/studentenhuis', StudentenhuisController.create)
+routes.get('/studentenhuis/:huisId', StudentenhuisController.getById)
+routes.put('/studentenhuis/:huisId', StudentenhuisController.update)
+routes.delete('/studentenhuis/:huisId', StudentenhuisController.delete)
 
-routes.get('/studentenhuis/:id', StudentenhuisController.getById)
-routes.put('/studentenhuis/:id', StudentenhuisController.update)
-routes.delete('/studentenhuis/:id', StudentenhuisController.delete)
+/** 
+ * maaltijd routes 
+ */
+routes.get('/studentenhuis/:huisId/maaltijd', MaaltijdController.getAllForUser)
+routes.post('/studentenhuis/:huisId/maaltijd', MaaltijdController.create)
+routes.get('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.getMaaltijdById)
+routes.put('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.update)
+routes.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.delete)
 
 module.exports = routes

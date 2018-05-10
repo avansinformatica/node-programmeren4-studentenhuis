@@ -1,5 +1,5 @@
 //
-// CRUD operations on person
+// CRUD operations
 //
 const ApiError = require('../model/ApiError')
 const assert = require('assert')
@@ -57,6 +57,10 @@ module.exports = {
                 if (err) {
                     const error = new ApiError(err, 412)
                     next(error);
+                }
+                if (rows.length === 0) {
+                    const error = new ApiError('This user has not created any studentenhuis. Create one first.', 404)
+                    next(error);
                 } else {
                     res.status(200).json(rows).end()
                 }
@@ -69,7 +73,7 @@ module.exports = {
      */
     getById(req, res, next) {
         try {
-            assert(req.params.id, 'ID is missing!')
+            assert(req.params.huisId, 'ID is missing!')
             assert(req.user && req.user.id, 'User ID is missing!')
         } catch (ex) {
             const error = new ApiError(ex.toString(), 500)
@@ -77,13 +81,17 @@ module.exports = {
             return
         }
 
-        db.query('SELECT * FROM studentenhuis WHERE ID = ? AND UserID = ?', [req.params.id, req.user.id],
+        db.query('SELECT * FROM studentenhuis WHERE ID = ? AND UserID = ?', [req.params.huisId, req.user.id],
             (err, rows, fields) => {
                 if (err) {
                     const error = new ApiError(err, 412)
                     next(error);
+                }
+                if (rows.length === 0) {
+                    const error = new ApiError('No access to this studentenhuis. Create one yourself!', 404)
+                    next(error);
                 } else {
-                    res.status(200).json(rows).end()
+                    res.status(200).json(rows[0]).end()
                 }
             })
     },
