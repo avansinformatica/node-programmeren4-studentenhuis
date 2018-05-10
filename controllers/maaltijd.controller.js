@@ -13,7 +13,7 @@ module.exports = {
             assert(req.user && req.user.id, 'User ID is missing!')
             assert(typeof (req.body) === 'object', 'request body must have an object containing naam and adres.')
             assert(typeof (req.body.naam) === 'string', 'naam must be a string.')
-            assert(typeof (req.body.adres) === 'string', 'adres must be a string.')
+            // Hier moeten meer validaties komen.
         } catch (ex) {
             const error = new ApiError(ex.toString(), 500)
             next(error)
@@ -21,7 +21,11 @@ module.exports = {
         }
 
         try {
-            db.query('INSERT INTO `studentenhuis` (Naam, Adres, UserID) VALUES (?,?,?)', [req.body.naam, req.body.adres, req.user.id],
+            const huisId = req.params.huisId
+            const userId = req.user.id
+            const query = 'INSERT INTO `maaltijd` (Naam, Beschrijving, Ingredienten, Allergie, Prijs, UserID, StudentenhuisID) VALUES (?, ?, ?, ?, ?, ?, ?)'
+            const values = [req.body.naam, req.body.beschrijving, req.body.ingredienten, req.body.allergie, req.body.prijs, userId, huisId]
+            db.query(query, values,
                 (err, rows, fields) => {
                     if (err) {
                         const error = new ApiError(err, 412)
@@ -44,9 +48,11 @@ module.exports = {
      * De user ID zit in het request na validatie! 
      */
     getAll(req, res, next) {
-
         try {
-            db.query('SELECT * FROM view_studentenhuis',
+            const huisId = req.params.huisId
+            const query = 'SELECT ID, Naam, Beschrijving, Ingredienten, Allergie, Prijs FROM maaltijd WHERE StudentenhuisID = ?'
+            const values = [huisId]
+            db.query(query, values,
                 (err, rows, fields) => {
                     if (err) {
                         const error = new ApiError(err, 412)
@@ -66,20 +72,21 @@ module.exports = {
      * Haal alle items op voor de user met gegeven id. 
      * De user ID zit in het request na validatie! 
      */
-    getById(req, res, next) {
-        try {
-            assert(req.params.huisId, 'ID is missing!')
-        } catch (ex) {
-            const error = new ApiError(ex.toString(), 500)
-            next(error)
-            return
-        }
+    getMaaltijdById(req, res, next) {
 
         try {
-            db.query('SELECT * FROM view_studentenhuis WHERE ID = ?', [req.params.huisId],
+            const huisId = req.params.huisId
+            const maaltijdId = req.params.maaltijdId
+            const query = 'SELECT ID, Naam, Beschrijving, Ingredienten, Allergie, Prijs FROM maaltijd WHERE StudentenhuisID = ? AND ID = ?'
+            const values = [huisId, maaltijdId]
+            db.query(query, values,
                 (err, rows, fields) => {
                     if (err) {
                         const error = new ApiError(err, 412)
+                        next(error);
+                    }
+                    if (rows.length === 0) {
+                        const error = new ApiError('Non-exiting maaltijd or not allowed to access it.', 404)
                         next(error);
                     } else {
                         res.status(200).json(rows[0]).end()
