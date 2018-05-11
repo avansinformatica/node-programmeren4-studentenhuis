@@ -44,12 +44,14 @@ const DeelnemerController = require('../controllers/deelnemer.controller')
  */
 
 /**
- * Maak een nieuw studentenhuis.
- * Validatie vereist.
+ * Maak een nieuw studentenhuis. De gebruiker die het studentenhuis aanmaakt wordt bij het studentenhuis opgeslagen.
+ * De correctheid van de informatie die wordt gegeven moet door de server gevalideerd worden. 
+ * Bij ontbrekende of foutieve invoer wordt een juiste foutmelding geretourneerd.
+ * Authenticatie door middel van JWT vereist.
  * 
  * @route POST /api/studentenhuis
  * @group Studentenhuis - Endpoints voor CRUD functionaliteit op een studentenhuis.
- * @param {Studentenhuis.model} studentenhuis.body.required - Een object met de gegevens van het studentenhuis.
+ * @param {Studentenhuis.model} studentenhuis.body.required - Een object in de request body met de gegevens van het studentenhuis.
  * @returns {StudentenhuisResponse.model} 200 - Het toegevoegde studentenhuis met ID en gebruikersinfo
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  * @returns {ApiError.model}  412 - Een of meer properties in de request body ontbreken of zijn foutief 
@@ -58,7 +60,7 @@ routes.post('/studentenhuis', StudentenhuisController.create)
 
 /**
  * Retourneer een lijst met alle studentenhuizen.
- * Validatie vereist.
+ * Authenticatie door middel van JWT vereist.
  * 
  * @route GET /api/studentenhuis
  * @group Studentenhuis - Endpoints voor CRUD functionaliteit op een studentenhuis.
@@ -69,7 +71,7 @@ routes.get('/studentenhuis', StudentenhuisController.getAll)
 
 /**
  * Retourneer het studentenhuis met de gegeven huisId.
- * Validatie vereist.
+ * Authenticatie door middel van JWT vereist.
  * 
  * @route GET /api/studentenhuis
  * @group Studentenhuis - Endpoints voor CRUD functionaliteit op een studentenhuis.
@@ -80,11 +82,14 @@ routes.get('/studentenhuis/:huisId', StudentenhuisController.getById)
 
 /**
  * Vervang het studentenhuis met de gegeven huisId.
- * Validatie vereist.
+ * De correctheid van de informatie die wordt gegeven moet door de server gevalideerd worden. 
+ * Bij ontbrekende of foutieve invoer wordt een juiste foutmelding geretourneerd.
+ * Authenticatie door middel van JWT vereist.
  * 
  * @route PUT /api/studentenhuis/{huisId}
  * @group Studentenhuis - Endpoints voor CRUD functionaliteit op een studentenhuis.
- * @returns {Studentenhuis.model} 200 - Het gewijzigde studentenhuis.
+ * @param {Studentenhuis.model} studentenhuis.body.required - Het gewijzigde studentenhuis.
+ * @returns {StudentenhuisResponse.model} 200 - Het gewijzigde studentenhuis.
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  * @returns {ApiError.model}  412 - Een of meer properties in de request body ontbreken of zijn foutief 
  */
@@ -93,11 +98,11 @@ routes.put('/studentenhuis/:huisId', StudentenhuisController.update)
 /**
  * Verwijder het studentenhuis met de gegeven huisId.
  * Let op: Een gebruiker kan alleen zijn eigen studentenhuis verwijderen!
- * Validatie vereist.
+ * Authenticatie door middel van JWT vereist.
  * 
  * @route DELETE /api/studentenhuis/{huisId}
  * @group Studentenhuis - Endpoints voor CRUD functionaliteit op een studentenhuis.
- * @returns {object} 200 - Token informatie
+ * @returns {object} 200 - Info dat de verwijderis is gelukt.
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  * @returns {ApiError.model}  409 - Conflict (Gebruiker mag deze data niet verwijderen)
  * @returns {ApiError.model}  412 - Een of meer properties in de request body ontbreken of zijn foutief 
@@ -106,20 +111,22 @@ routes.delete('/studentenhuis/:huisId', StudentenhuisController.delete)
 
 /**
  * Maak een nieuwe maaltijd voor een studentenhuis.
- * Validatie vereist.
+ * De correctheid van de informatie die wordt gegeven moet door de server gevalideerd worden. 
+ * Bij ontbrekende of foutieve invoer wordt een juiste foutmelding geretourneerd.
+ * Authenticatie door middel van JWT vereist.
  * 
  * @route POST /api/studentenhuis/{huisId}/maaltijd
  * @group Maaltijd - Endpoints voor CRUD functionaliteit op een maaltijd.
- * @param {string} email.body.required - emailadres
- * @param {string} password.body.required - password
- * @returns {ValidToken.model} 200 - Token informatie
+ * @param {Maaltijd.model} maaltijd.body.required - Een object in de request body met de gegevens van de maaltijd
+ * @returns {Maaltijd.model} 200 - De maaltijd die toegevoegd is
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
+ * @returns {ApiError.model}  412 - Een of meer properties in de request body ontbreken of zijn foutief 
  */
 routes.post('/studentenhuis/:huisId/maaltijd', MaaltijdController.create)
 
 /**
  * Retourneer alle maaltijden voor een studentenhuis. 
- * Validatie vereist.
+ * Authenticatie door middel van JWT vereist.
  * 
  * @route GET /api/studentenhuis/{huisId}/maaltijd
  * @group Maaltijd - Endpoints voor CRUD functionaliteit op een maaltijd.
@@ -132,7 +139,7 @@ routes.get('/studentenhuis/:huisId/maaltijd', MaaltijdController.getAll)
 
 /**
  * Retourneer de maaltijd met het gegeven maaltijdId.
- * Validatie vereist.
+ * Authenticatie door middel van JWT vereist.
  * 
  * @route GET /api/studentenhuis/{huisId}/maaltijd
  * @group Maaltijd - Endpoints voor CRUD functionaliteit op een maaltijd.
@@ -145,13 +152,14 @@ routes.get('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.get
 
 /**
  * Vervang de maaltijd met het gegeven maaltijdId door de nieuwe maaltijd in de request body.
+ * De correctheid van de informatie die wordt gegeven moet door de server gevalideerd worden.
+ * Bij ontbrekende of foutieve invoer wordt een juiste foutmelding geretourneerd.
  * Let op: een gebruiker kan alleen zijn eigen maaltijden vervangen! 
- * Validatie vereist. 
+ * Authenticatie door middel van JWT vereist. 
  * 
- * @route PUT /api/studentenhuis/{huisId}/maaltijd
+ * @route PUT /api/studentenhuis/{huisId}/maaltijd/{maaltijdId}
  * @group Maaltijd - Endpoints voor CRUD functionaliteit op een maaltijd.
- * @param {string} email.body.required - emailadres
- * @param {string} password.body.required - password
+ * @param {Maaltijd.model} maaltijd.body.required - De nieuwe maaltijd
  * @returns {ValidToken.model} 200 - Token informatie
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  */
@@ -159,10 +167,10 @@ routes.put('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.upd
 
 /**
  * Verwijder de maaltijd met het gegeven maaltijdId.
- * Validatie vereist. 
+ * Authenticatie door middel van JWT vereist. 
  * Let op: een gebruiker kan alleen zijn eigen maaltijden vervangen! 
  * 
- * @route DELETE /api/studentenhuis/{huisId}/maaltijd
+ * @route DELETE /api/studentenhuis/{huisId}/maaltijd/{maaltijdId}
  * @group Maaltijd - Endpoints voor CRUD functionaliteit op een maaltijd.
  * @returns {ValidToken.model} 200 - Token informatie
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
@@ -171,14 +179,13 @@ routes.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.
 
 /**
  * Meld je aan voor een maaltijd in een studentenhuis. 
- * Validatie vereist. 
  * De user ID uit het token is dat van de gebruiker die zich aanmeldt. 
  * Die gebruiker wordt dus aan de lijst met aanmelders toegevoegd. 
+ * Een gebruiker kan zich alleen aanmelden als hij niet al aan de maaltijd deelneemt; anders volgt een foutmelding.
+ * Authenticatie door middel van JWT vereist. 
  * 
  * @route POST /api/studentenhuis/{huisId}/maaltijd/{maaltijdId}
  * @group Deelnemers - Endpoints voor CRUD functionaliteit op een deelnemers aan een maaltijd.
- * @param {string} email.body.required - emailadres
- * @param {string} password.body.required - password
  * @returns {ValidToken.model} 200 - Token informatie
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  */
@@ -187,11 +194,11 @@ routes.post('/studentenhuis/:huisId/maaltijd/:maaltijdId', DeelnemerController.c
 /**
  * Geef de lijst met deelnemers voor de maaltijd met gegeven maaltijdID in het studentenhuis met huisId. 
  * Deelnemers zijn geregistreerde gebruikers die zich hebben aangemeld voor deze maaltijd.
- * Validatie vereist.
+ * Authenticatie door middel van JWT vereist.
  * 
  * @route GET /api/studentenhuis/{huisId}/maaltijd/{maaltijdId}/deelnemers
  * @group Deelnemers - Endpoints voor CRUD functionaliteit op een deelnemers aan een maaltijd.
- * @returns {ValidToken.model} 200 - Token informatie
+ * @returns {Deelnemer.model} 200 - Een array met deelnemers aan de gegeven maaltijd in het gegeven studentenhuis.
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  */
 routes.get('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', DeelnemerController.getAll)
@@ -202,7 +209,7 @@ routes.get('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', DeelnemerCo
  * De payload in het token moet daarom de gebruikers ID bevatten.
  * Een gebruiker kan alleen zijn eigen aanmelding verwijderen. 
  *  
- * Validatie vereist. 
+ * Authenticatie door middel van JWT vereist. 
  * 
  * @route DELETE /api/studentenhuis/{huisId}/maaltijd/{maaltijdId}/deelnemers
  * @group Deelnemers - Endpoints voor CRUD functionaliteit op een deelnemers aan een maaltijd.
