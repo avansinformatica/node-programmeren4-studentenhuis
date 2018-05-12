@@ -7,6 +7,9 @@
     "test": "./node_modules/.bin/mocha --reporter spec --exit",
     "start": "nodemon server.js"
   },
+  "engines": {
+    "node": ">=5.7.1"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/avansinformatica/node-programmeren4-studentenhuis.git"
