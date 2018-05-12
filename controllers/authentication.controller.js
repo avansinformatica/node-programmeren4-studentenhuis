@@ -183,7 +183,7 @@ module.exports = {
                                 }
                             })
                     } catch (ex) {
-                        const error = new ApiError(ex.toString(), 412)
+                        const error = new ApiError(ex, 412)
                         next(error);
                     }
                 }
