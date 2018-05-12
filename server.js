@@ -22,7 +22,7 @@ let options = {
 			title: 'Avans Programmeren 4 - Studentenhuis casus'
 		},
 		// host: 'localhost:3000',
-		host: 'mee-eten.herokuapp.com',
+		host: process.env.ALLOW_ORIGIN || 'mee-eten.herokuapp.com',
 		produces: [
 			"application/json"
 		],

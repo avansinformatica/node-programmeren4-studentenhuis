@@ -5,6 +5,20 @@ const routes = require('express').Router();
 const AuthController = require('../controllers/authentication.controller')
 
 /**
+ * @typedef UserLoginJSON
+ * @property {string} email
+ * @property {string} password
+ */
+
+/**
+ * @typedef UserRegisterJSON
+ * @property {string} firstname
+ * @property {string} lastname
+ * @property {string} email
+ * @property {string} password
+ */
+
+/**
  * @typedef ApiError
  * @property {string} message - De tekst van de foutmelding.
  * @property {integer} code - HTTP error code
@@ -20,10 +34,10 @@ const AuthController = require('../controllers/authentication.controller')
 /**
  * Login.Vereist een JSON object in de request body, met daarin de properties 
  * email en password.Deze zijn hieronder beschreven.
+ * 
  * @route POST /api/login
  * @group Authentication - Endpoints voor login en registratie.
- * @param {string} email.body.required - emailadres
- * @param {string} password.body.required - password
+ * @param {UserLoginJSON.model} user.body.required - De userinformatie waarmee je inlogt
  * @returns {ValidToken.model} 200 - Token informatie
  * @returns {ApiError.model}  401 - Not authenticated
  */
@@ -35,10 +49,7 @@ routes.post('/login', AuthController.login)
  *  
  * @route POST /api/register
  * @group Authentication - Endpoints voor login en registratie.
- * @param {string} firstname.body.required - User's firstname.
- * @param {string} lastname.body.required - User's lastname.
- * @param {string} email.body.required - User's emailadres
- * @param {string} password.body.required - User's password.
+ * @param {UserRegisterJSON.model} user.body.required - De userinformatie waarmee je registreert
  * @returns {ValidToken.model} 200 - Token informatie
  * @returns {ApiError.model} 401 - Not authenticated
  */
