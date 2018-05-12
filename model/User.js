@@ -29,7 +29,12 @@ class User {
             assert(password.trim().length > 2, 'password must be at least 3 characters')
         } catch (ex) {
             console.log(ex.toString())
-            throw (new ApiError(ex.toString(), 422))
+            /**
+             * We cannot handle the error by Express next(), so we throw it here.
+             * The calling function must surround this constructor with try/catch
+             * and forward the ApiError exeption to next() for us.
+             */
+            throw (new ApiError(ex.toString(), 412))
         }
 
         this.name = {

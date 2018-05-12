@@ -22,6 +22,7 @@ module.exports = {
      */
     validateToken(req, res, next) {
         // console.log('validateToken called')
+        console.dir(req.headers)
 
         /**
          * A token can be sent in the body of a request, via a query parameter (in the URL),
@@ -154,6 +155,9 @@ module.exports = {
                     const error = new ApiError('Email already exists', 412)
                     next(error);
                 } else {
+                    /**
+                     * User constructor could throw an exception
+                     */
                     try {
                         const user = new User(
                             req.body.firstname,

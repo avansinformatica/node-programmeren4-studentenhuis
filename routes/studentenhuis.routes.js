@@ -79,7 +79,7 @@ routes.post('/studentenhuis', StudentenhuisController.create)
  * 
  * @route GET /api/studentenhuis
  * @group Studentenhuis - Endpoints voor CRUD functionaliteit op een studentenhuis.
- * @returns {Studentenhuis.model} 200 - Een array met studentenhuizen.
+ * @returns {StudentenhuisResponse.model} 200 - Een array met studentenhuizen.
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  */
 routes.get('/studentenhuis', StudentenhuisController.getAll)
@@ -90,7 +90,7 @@ routes.get('/studentenhuis', StudentenhuisController.getAll)
  * 
  * @route GET /api/studentenhuis
  * @group Studentenhuis - Endpoints voor CRUD functionaliteit op een studentenhuis.
- * @returns {Studentenhuis.model} 200 - Het studentenhuis met de gegeven huisId.
+ * @returns {StudentenhuisResponse.model} 200 - Het studentenhuis met de gegeven huisId.
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  */
 routes.get('/studentenhuis/:huisId', StudentenhuisController.getById)
@@ -117,7 +117,7 @@ routes.put('/studentenhuis/:huisId', StudentenhuisController.update)
  * 
  * @route DELETE /api/studentenhuis/{huisId}
  * @group Studentenhuis - Endpoints voor CRUD functionaliteit op een studentenhuis.
- * @returns {object} 200 - Info dat de verwijderis is gelukt.
+ * @returns {object} 200 - Info dat de verwijdering is gelukt.
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  * @returns {ApiError.model}  409 - Conflict (Gebruiker mag deze data niet verwijderen)
  * @returns {ApiError.model}  412 - Een of meer properties in de request body ontbreken of zijn foutief 
@@ -133,21 +133,19 @@ routes.delete('/studentenhuis/:huisId', StudentenhuisController.delete)
  * @route POST /api/studentenhuis/{huisId}/maaltijd
  * @group Maaltijd - Endpoints voor CRUD functionaliteit op een maaltijd.
  * @param {Maaltijd.model} maaltijd.body.required - Een object in de request body met de gegevens van de maaltijd
- * @returns {Maaltijd.model} 200 - De maaltijd die toegevoegd is
+ * @returns {MaaltijdResponse.model} 200 - De maaltijd die toegevoegd is
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  * @returns {ApiError.model}  412 - Een of meer properties in de request body ontbreken of zijn foutief 
  */
 routes.post('/studentenhuis/:huisId/maaltijd', MaaltijdController.create)
 
 /**
- * Retourneer alle maaltijden voor een studentenhuis. 
+ * Retourneer alle maaltijden voor het studentenhuis met de gegeven huisId. 
  * Authenticatie door middel van JWT vereist.
  * 
  * @route GET /api/studentenhuis/{huisId}/maaltijd
  * @group Maaltijd - Endpoints voor CRUD functionaliteit op een maaltijd.
- * @param {string} email.body.required - emailadres
- * @param {string} password.body.required - password
- * @returns {ValidToken.model} 200 - Token informatie
+ * @returns {MaaltijdResponse.model} 200 - Een lijst met alle maaltijden van het gegeven studentenhuis
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  */
 routes.get('/studentenhuis/:huisId/maaltijd', MaaltijdController.getAll)
@@ -156,11 +154,9 @@ routes.get('/studentenhuis/:huisId/maaltijd', MaaltijdController.getAll)
  * Retourneer de maaltijd met het gegeven maaltijdId.
  * Authenticatie door middel van JWT vereist.
  * 
- * @route GET /api/studentenhuis/{huisId}/maaltijd
+ * @route GET /api/studentenhuis/{huisId}/maaltijd/{maaltijdId}
  * @group Maaltijd - Endpoints voor CRUD functionaliteit op een maaltijd.
- * @param {string} email.body.required - emailadres
- * @param {string} password.body.required - password
- * @returns {ValidToken.model} 200 - Token informatie
+ * @returns {MaaltijdResponse.model} 200 - De gevraagde maaltijdinformatie
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  */
 routes.get('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.getMaaltijdById)
@@ -175,7 +171,7 @@ routes.get('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.get
  * @route PUT /api/studentenhuis/{huisId}/maaltijd/{maaltijdId}
  * @group Maaltijd - Endpoints voor CRUD functionaliteit op een maaltijd.
  * @param {Maaltijd.model} maaltijd.body.required - De nieuwe maaltijd
- * @returns {ValidToken.model} 200 - Token informatie
+ * @returns {MaaltijdResponse.model} 200 - De bijgewerkte maaltijd
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  */
 routes.put('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.update)
@@ -187,7 +183,7 @@ routes.put('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.upd
  * 
  * @route DELETE /api/studentenhuis/{huisId}/maaltijd/{maaltijdId}
  * @group Maaltijd - Endpoints voor CRUD functionaliteit op een maaltijd.
- * @returns {ValidToken.model} 200 - Token informatie
+ * @returns {object} 200 - Info over de status van de verwijderactie
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  */
 routes.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.delete)
@@ -201,7 +197,7 @@ routes.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.
  * 
  * @route POST /api/studentenhuis/{huisId}/maaltijd/{maaltijdId}
  * @group Deelnemers - Endpoints voor CRUD functionaliteit op een deelnemers aan een maaltijd.
- * @returns {ValidToken.model} 200 - Token informatie
+ * @returns {DeelnemerResponse.model} 200 - Informatie over de toegevoegde deelnemer
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  */
 routes.post('/studentenhuis/:huisId/maaltijd/:maaltijdId', DeelnemerController.create)
@@ -228,7 +224,7 @@ routes.get('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', DeelnemerCo
  * 
  * @route DELETE /api/studentenhuis/{huisId}/maaltijd/{maaltijdId}/deelnemers
  * @group Deelnemers - Endpoints voor CRUD functionaliteit op een deelnemers aan een maaltijd.
- * @returns {ValidToken.model} 200 - Token informatie
+ * @returns {object} 200 - Informatie over de verwijderactie
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  */
 routes.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId', DeelnemerController.delete)
