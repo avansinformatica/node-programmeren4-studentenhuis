@@ -21,7 +21,8 @@ let options = {
 			description: 'Deze server toont de API beschrijving van de Nodejs server uit de eindopdracht van Programmeren 4, periode 4, kans 1.',
 			title: 'Avans Programmeren 4 - Studentenhuis casus'
 		},
-		host: 'localhost:3000',
+		// host: 'localhost:3000',
+		host: 'mee-eten.herokuapp.com',
 		produces: [
 			"application/json"
 		],
@@ -57,8 +58,14 @@ app.use(bodyParser.json())
 // Instal Morgan as logger
 app.use(morgan('dev'))
 
-// Swagger API docs
-// app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// Add CORS headers
+app.use(function (req, res, next) {
+	res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+	res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+	res.setHeader('Access-Control-Allow-Credentials', true);
+	next();
+});
 
 // Preprocessing catch-all endpoint
 // The perfect place to check that the user performing the request 

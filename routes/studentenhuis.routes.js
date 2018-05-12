@@ -38,7 +38,22 @@ const DeelnemerController = require('../controllers/deelnemer.controller')
  */
 
 /**
+ * @typedef MaaltijdResponse
+ * @property {string} naam - Naam van de maaltijd
+ * @property {string} beschrijving - Korte beschrijving van de maaltijd.
+ * @property {string} ingredienten - Ingredienten van de maaltijd, komma gescheiden.
+ * @property {string} allergie - Allergie informatie van de maaltijd.
+ * @property {number} prijs - Prijs van de maaltijd (alleen in hele getallen).
+ */
+
+/**
  * @typedef Deelnemer
+ * @property {string} token - Een geldig gegenereerd JWT token.
+ * @property {string} email - Het email adres dat de gebruiker heeft opgegeven.
+ */
+
+/**
+ * @typedef DeelnemerResponse
  * @property {string} token - Een geldig gegenereerd JWT token.
  * @property {string} email - Het email adres dat de gebruiker heeft opgegeven.
  */
