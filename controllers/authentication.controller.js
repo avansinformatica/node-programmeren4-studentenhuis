@@ -154,7 +154,6 @@ module.exports = {
                     const error = new ApiError('Email already exists', 412)
                     next(error);
                 } else {
-
                     try {
                         const user = new User(
                             req.body.firstname,
@@ -163,30 +162,30 @@ module.exports = {
                             req.body.password
                         )
                         console.dir(user)
+
+                        db.query('INSERT INTO `user` (Firstname, Lastname, Email, Password) VALUES (?, ?, ?, ?)', [user.name.firstname, user.name.lastname, user.email, user.password],
+                            (err, rows, fields) => {
+                                if (err) {
+                                    const error = new ApiError(err, 412)
+                                    next(error);
+                                } else {
+                                    // Create an object containing the data we want in the payload.
+                                    const payload = {
+                                        user: user.email,
+                                        id: rows.insertId
+                                    }
+                                    // Userinfo returned to the caller.
+                                    const userinfo = {
+                                        token: auth.encodeToken(payload),
+                                        email: user.email
+                                    }
+                                    res.status(200).json(userinfo).end()
+                                }
+                            })
                     } catch (ex) {
                         const error = new ApiError(err, 412)
                         next(error);
                     }
-
-                    db.query('INSERT INTO `user` (Firstname, Lastname, Email, Password) VALUES (?, ?, ?, ?)', [user.name.firstname, user.name.lastname, user.email, user.password],
-                        (err, rows, fields) => {
-                            if (err) {
-                                const error = new ApiError(err, 412)
-                                next(error);
-                            } else {
-                                // Create an object containing the data we want in the payload.
-                                const payload = {
-                                    user: user.email,
-                                    id: rows.insertId
-                                }
-                                // Userinfo returned to the caller.
-                                const userinfo = {
-                                    token: auth.encodeToken(payload),
-                                    email: user.email
-                                }
-                                res.status(200).json(userinfo).end()
-                            }
-                        })
                 }
             }
         })
