@@ -10,6 +10,7 @@ const settings = require('./config/config')
 const db = require('./config/db.improved');
 
 const port = process.env.PORT || settings.webPort
+const httpSchemes = process.env.NODE_ENV === 'production' ? ['https'] : ['http']
 
 let app = express()
 
@@ -39,10 +40,10 @@ let options = {
 				value: "xx.ff.tt"
 			}
 		},
-		schemes: ['http', 'https']
+		schemes: httpSchemes // ['http', 'https']
 	},
 	basedir: __dirname, //app absolute path
-	files: ['./routes/**/*.js'], //Path to the API handle folder,
+	files: ['./routes/**/*.js'], //Path to the API routes folder,
 	securitySchemes: {
 		bearerAuth: {
 			type: "http",
