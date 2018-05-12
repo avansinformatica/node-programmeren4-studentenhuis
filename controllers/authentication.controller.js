@@ -155,13 +155,18 @@ module.exports = {
                     next(error);
                 } else {
 
-                    const user = new User(
-                        req.body.firstname,
-                        req.body.lastname,
-                        req.body.email,
-                        req.body.password
-                    )
-                    console.dir(user)
+                    try {
+                        const user = new User(
+                            req.body.firstname,
+                            req.body.lastname,
+                            req.body.email,
+                            req.body.password
+                        )
+                        console.dir(user)
+                    } catch (ex) {
+                        const error = new ApiError(err, 412)
+                        next(error);
+                    }
 
                     db.query('INSERT INTO `user` (Firstname, Lastname, Email, Password) VALUES (?, ?, ?, ?)', [user.name.firstname, user.name.lastname, user.email, user.password],
                         (err, rows, fields) => {

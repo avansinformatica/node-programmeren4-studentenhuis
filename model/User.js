@@ -29,7 +29,7 @@ class User {
             assert(password.trim().length > 2, 'password must be at least 3 characters')
         } catch (ex) {
             console.log(ex.toString())
-            next(new ApiError(ex.toString(), 422))
+            throw (new ApiError(ex.toString(), 422))
         }
 
         this.name = {
