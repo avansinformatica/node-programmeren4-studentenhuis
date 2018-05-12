@@ -38,7 +38,8 @@ let options = {
 					"'x-access-token' header : \n\n xxxxxx.yyyyyyy.zzzzzz",
 				value: "xx.ff.tt"
 			}
-		}
+		},
+		schemes: ['http', 'https']
 	},
 	basedir: __dirname, //app absolute path
 	files: ['./routes/**/*.js'], //Path to the API handle folder,
