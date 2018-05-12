@@ -16,8 +16,8 @@ GRANT SELECT, INSERT, DELETE, UPDATE ON `studentenhuis`.* TO 'studentenhuis_user
 DROP TABLE IF EXISTS `user` ;
 CREATE TABLE IF NOT EXISTS `user` (
 	`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	`Firstname` VARCHAR(32) NOT NULL,
-	`Lastname` VARCHAR(32) NOT NULL,
+	`Voornaam` VARCHAR(32) NOT NULL,
+	`Achternaam` VARCHAR(32) NOT NULL,
 	`Email` VARCHAR(32) NOT NULL,
 	`Password` CHAR(64) BINARY NOT NULL,
 	PRIMARY KEY (`ID`)
@@ -27,7 +27,7 @@ ENGINE = InnoDB;
 -- Voorbeeld insert query. Wanneer je in Nodejs de ? variant gebruikt hoeven de '' niet om de waarden.
 -- Zet die dan wel in het array er na, in de goede volgorde.
 -- In je Nodejs app zou het password wel encrypted moeten worden.
-INSERT INTO `user` (Firstname, Lastname, Email, Password) VALUES ('Jan', 'Smit', 'jsmit@server.nl', 'secret');
+INSERT INTO `user` (Voornaam, Achternaam, Email, Password) VALUES ('Jan', 'Smit', 'jsmit@server.nl', 'secret');
 
 -- -----------------------------------------------------
 -- Table `studentenhuis`
@@ -128,7 +128,7 @@ SELECT
 	`studentenhuis`.`ID`,
 	`studentenhuis`.`Naam`,
 	`studentenhuis`.`Adres`,
-	CONCAT(`user`.`Firstname`, ' ', `user`.`Lastname`) AS `Contact`,
+	CONCAT(`user`.`Voornaam`, ' ', `user`.`Achternaam`) AS `Contact`,
 	`user`.`Email`
 FROM `studentenhuis`
 LEFT JOIN `user` ON `studentenhuis`.`UserID` = `user`.`ID`;
@@ -143,8 +143,8 @@ CREATE OR REPLACE VIEW `view_deelnemers` AS
 SELECT 
 	`deelnemers`.`StudentenhuisID`,
 	`deelnemers`.`MaaltijdID`,
-	`user`.`Firstname`,
-	`user`.`Lastname`,
+	`user`.`Voornaam`,
+	`user`.`Achternaam`,
 	`user`.`Email`
 FROM `deelnemers`
 LEFT JOIN `user` ON `deelnemers`.`UserID` = `user`.`ID`;

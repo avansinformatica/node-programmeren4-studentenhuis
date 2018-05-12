@@ -32,8 +32,11 @@ const AuthController = require('../controllers/authentication.controller')
  */
 
 /**
- * Login.Vereist een JSON object in de request body, met daarin de properties 
+ * Login. Vereist een JSON object in de request body, met daarin de properties 
  * email en password.Deze zijn hieronder beschreven.
+ * Wanneer de combinatie van email en password correct is wordt een JSON object met 
+ * het token en het emailadres van de gebruiker geretourneerd. Als emailadres of password
+ * niet valide zijn volgt een foutmelding.
  * 
  * @route POST /api/login
  * @group Authentication - Endpoints voor login en registratie.
@@ -45,7 +48,9 @@ const AuthController = require('../controllers/authentication.controller')
 routes.post('/login', AuthController.login)
 
 /**
- * Register. Vereist een JSON object in de request body, met daarin de properties 
+ * Registreer een nieuwe gebruikers. Het emailadres van de gebruiker is uniek.
+ * Een gebruiker kan zich dus slechts 1 maal aanmelden met een emailadres. 
+ * Vereist een JSON object in de request body, met daarin de properties 
  * firstname, lastname, email en password. Deze zijn hieronder beschreven.
  *  
  * @route POST /api/register

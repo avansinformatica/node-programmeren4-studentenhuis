@@ -58,7 +58,7 @@ module.exports = {
         try {
             const huisId = req.params.huisId
             const maaltijdId = req.params.maaltijdId
-            const query = 'SELECT Firstname, Lastname, Email FROM view_deelnemers WHERE StudentenhuisID = ? AND MaaltijdID = ?'
+            const query = 'SELECT Voornaam, Achternaam, Email FROM view_deelnemers WHERE StudentenhuisID = ? AND MaaltijdID = ?'
             const values = [huisId, maaltijdId]
             db.query(query, values,
                 (err, rows, fields) => {

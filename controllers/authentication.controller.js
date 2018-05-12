@@ -167,7 +167,7 @@ module.exports = {
                         )
                         console.dir(user)
 
-                        db.query('INSERT INTO `user` (Firstname, Lastname, Email, Password) VALUES (?, ?, ?, ?)', [user.name.firstname, user.name.lastname, user.email, user.password],
+                        db.query('INSERT INTO `user` (Voornaam, Achternaam, Email, Password) VALUES (?, ?, ?, ?)', [user.name.firstname, user.name.lastname, user.email, user.password],
                             (err, rows, fields) => {
                                 if (err) {
                                     const error = new ApiError(err, 412)
