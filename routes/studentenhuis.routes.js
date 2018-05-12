@@ -24,7 +24,7 @@ const DeelnemerController = require('../controllers/deelnemer.controller')
  * @property {number} ID - De ID van het studentenhuis
  * @property {string} naam - De naam van het studentenhuis
  * @property {string} adres - Straatnaam en huisnummer van het studentenhuis
- * @property {string} admin - De voor en achternaam van de gebruiker die het studentenhuis heeft aangemaakt.
+ * @property {string} contact - De voor en achternaam van de gebruiker die het studentenhuis heeft aangemaakt.
  * @property {string} email - Email van de gebruiker die het studentenhuis heeft aangemaakt.
  */
 

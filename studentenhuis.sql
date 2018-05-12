@@ -6,9 +6,9 @@ USE `studentenhuis`;
 CREATE USER 'studentenhuis_user'@'%' IDENTIFIED BY 'secret';
 CREATE USER 'studentenhuis_user'@'localhost' IDENTIFIED BY 'secret';
 
--- geef in een keer alle rechten - soort administrator!
-GRANT ALL ON `studentenhuis`.* TO 'studentenhuis_user'@'%';
-GRANT ALL ON `studentenhuis`.* TO 'studentenhuis_user'@'localhost';
+-- geef rechten aan deze user
+GRANT SELECT, INSERT, DELETE, UPDATE ON `studentenhuis`.* TO 'studentenhuis_user'@'%';
+GRANT SELECT, INSERT, DELETE, UPDATE ON `studentenhuis`.* TO 'studentenhuis_user'@'localhost';
 
 -- -----------------------------------------------------
 -- Table `users`
@@ -128,7 +128,7 @@ SELECT
 	`studentenhuis`.`ID`,
 	`studentenhuis`.`Naam`,
 	`studentenhuis`.`Adres`,
-	CONCAT(`user`.`Firstname`, ' ', `user`.`Lastname`) AS `Admin`,
+	CONCAT(`user`.`Firstname`, ' ', `user`.`Lastname`) AS `Contact`,
 	`user`.`Email`
 FROM `studentenhuis`
 LEFT JOIN `user` ON `studentenhuis`.`UserID` = `user`.`ID`;
