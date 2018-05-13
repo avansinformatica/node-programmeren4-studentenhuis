@@ -48,10 +48,6 @@ const DeelnemerController = require('../controllers/deelnemer.controller')
  */
 
 /**
- * @typedef Deelnemer
- */
-
-/**
  * @typedef DeelnemerResponse
  * @property {string} voornaam.required
  * @property {string} achternaam.required
