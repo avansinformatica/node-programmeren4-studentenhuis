@@ -15,7 +15,7 @@ const description =
 	'<p>Deze server toont de API beschrijving van de Nodejs server uit de eindopdracht van Programmeren 4, periode 4, kans 1.' +
 	'</br>Neem deze routes over in de uitwerking van je server. Neem ook de modellen van de parameters en responses over.</p>' +
 	'<p>Voor de responses hoef je in je uitwerking geen JavaScript class te maken.</p>' +
-	'<p><b>Let op</b>: wanneer een endpoint een lijst of array retourneert gaat het om een array van het model dat daar vermeld staat wordt.'
+	'<p><b>Let op</b>: wanneer een endpoint een lijst of array retourneert gaat het om een array van het model dat daar vermeld staat.'
 
 let app = express()
 
