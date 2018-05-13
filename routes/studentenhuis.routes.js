@@ -207,7 +207,7 @@ routes.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.
  * Authenticatie door middel van JWT is vereist. 
  * 
  * @route POST /api/studentenhuis/{huisId}/maaltijd/{maaltijdId}
- * @group Deelnemers - Endpoints voor CRUD functionaliteit op een deelnemers aan een maaltijd.
+ * @group Deelnemers - Endpoints voor CRUD functionaliteit op een deelnemer aan een maaltijd.
  * @returns {DeelnemerResponse.model} 200 - Informatie over de toegevoegde deelnemer
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  */
@@ -220,7 +220,7 @@ routes.post('/studentenhuis/:huisId/maaltijd/:maaltijdId', DeelnemerController.c
  * Authenticatie door middel van JWT is vereist.
  * 
  * @route GET /api/studentenhuis/{huisId}/maaltijd/{maaltijdId}/deelnemers
- * @group Deelnemers - Endpoints voor CRUD functionaliteit op een deelnemers aan een maaltijd.
+ * @group Deelnemers - Endpoints voor CRUD functionaliteit op een deelnemer aan een maaltijd.
  * @returns {Deelnemer.model} 200 - Een array met deelnemers aan de gegeven maaltijd in het gegeven studentenhuis.
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  */
@@ -233,7 +233,7 @@ routes.get('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', DeelnemerCo
  * Authenticatie door middel van JWT is vereist. 
  * 
  * @route DELETE /api/studentenhuis/{huisId}/maaltijd/{maaltijdId}/deelnemers
- * @group Deelnemers - Endpoints voor CRUD functionaliteit op een deelnemers aan een maaltijd.
+ * @group Deelnemers - Endpoints voor CRUD functionaliteit op een deelnemer aan een maaltijd.
  * @returns {object} 200 - Informatie over de verwijderactie
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  */
