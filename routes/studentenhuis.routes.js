@@ -90,7 +90,7 @@ routes.get('/studentenhuis', StudentenhuisController.getAll)
  * Als er geen studentenhuis met de gevraagde huisId bestaat wordt een juiste foutmelding geretourneerd.  
  * Authenticatie door middel van JWT is vereist.
  * 
- * @route GET /api/studentenhuis{huisId}
+ * @route GET /api/studentenhuis/{huisId}
  * @group Studentenhuis - Endpoints voor CRUD functionaliteit op een studentenhuis.
  * @returns {StudentenhuisResponse.model} 200 - Het studentenhuis met de gegeven huisId.
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
