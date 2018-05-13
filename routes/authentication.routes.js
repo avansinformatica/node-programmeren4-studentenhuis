@@ -22,7 +22,7 @@ const AuthController = require('../controllers/authentication.controller')
  * @typedef ApiError
  * @property {string} message.required
  * @property {integer} code.required
- * @property {string} datetime
+ * @property {string} datetime.required
  */
 
 /**

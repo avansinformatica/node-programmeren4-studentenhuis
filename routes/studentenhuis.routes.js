@@ -8,43 +8,43 @@ const DeelnemerController = require('../controllers/deelnemer.controller')
 
 /**
  * @typedef ApiError
- * @property {string} message - De tekst van de foutmelding.
- * @property {number} code - HTTP error code
- * @property {string} datetime - De datum en tijd in ISO notatie.
+ * @property {string} message.required - De tekst van de foutmelding.
+ * @property {number} code.required - HTTP error code
+ * @property {string} datetime.required - De datum en tijd in ISO notatie.
  */
 
 /**
  * @typedef Studentenhuis
- * @property {string} naam - De naam van het studentenhuis
- * @property {string} adres - Straatnaam en huisnummer van het studentenhuis
+ * @property {string} naam.required - De naam van het studentenhuis
+ * @property {string} adres.required - Straatnaam en huisnummer van het studentenhuis
  */
 
 /**
  * @typedef StudentenhuisResponse
- * @property {number} ID - De ID van het studentenhuis
- * @property {string} naam - De naam van het studentenhuis
- * @property {string} adres - Straatnaam en huisnummer van het studentenhuis
- * @property {string} contact - De voor en achternaam van de gebruiker die het studentenhuis heeft aangemaakt.
- * @property {string} email - Email van de gebruiker die het studentenhuis heeft aangemaakt.
+ * @property {number} ID.required - De ID van het studentenhuis
+ * @property {string} naam.required - De naam van het studentenhuis
+ * @property {string} adres.required - Straatnaam en huisnummer van het studentenhuis
+ * @property {string} contact.required - De voor en achternaam van de gebruiker die het studentenhuis heeft aangemaakt.
+ * @property {string} email.required - Email van de gebruiker die het studentenhuis heeft aangemaakt.
  */
 
 /**
  * @typedef Maaltijd
- * @property {string} naam - Naam van de maaltijd
- * @property {string} beschrijving - Korte beschrijving van de maaltijd.
- * @property {string} ingredienten - Ingredienten van de maaltijd, komma gescheiden.
- * @property {string} allergie - Allergie informatie van de maaltijd.
- * @property {number} prijs - Prijs van de maaltijd (alleen gehele getallen).
+ * @property {string} naam.required - Naam van de maaltijd
+ * @property {string} beschrijving.required - Korte beschrijving van de maaltijd.
+ * @property {string} ingredienten.required - Ingredienten van de maaltijd, komma gescheiden.
+ * @property {string} allergie.required - Allergie informatie van de maaltijd.
+ * @property {number} prijs.required - Prijs van de maaltijd (alleen gehele getallen).
  */
 
 /**
  * @typedef MaaltijdResponse
- * @property {number} ID - De ID van de maaltijd
- * @property {string} naam - Naam van de maaltijd
- * @property {string} beschrijving - Korte beschrijving van de maaltijd.
- * @property {string} ingredienten - Ingredienten van de maaltijd, komma gescheiden.
- * @property {string} allergie - Allergie informatie van de maaltijd.
- * @property {number} prijs - Prijs van de maaltijd (alleen gehele getallen).
+ * @property {number} ID.required - De ID van de maaltijd
+ * @property {string} naam.required - Naam van de maaltijd
+ * @property {string} beschrijving.required - Korte beschrijving van de maaltijd.
+ * @property {string} ingredienten.required - Ingredienten van de maaltijd, komma gescheiden.
+ * @property {string} allergie.required - Allergie informatie van de maaltijd.
+ * @property {number} prijs.required - Prijs van de maaltijd (alleen gehele getallen).
  */
 
 /**
@@ -53,8 +53,9 @@ const DeelnemerController = require('../controllers/deelnemer.controller')
 
 /**
  * @typedef DeelnemerResponse
- * @property {string} token - Een geldig gegenereerd JWT token.
- * @property {string} email - Het email adres dat de gebruiker heeft opgegeven.
+ * @property {string} voornaam.required
+ * @property {string} achternaam.required
+ * @property {string} email.required
  */
 
 /**
@@ -109,6 +110,7 @@ routes.get('/studentenhuis/:huisId', StudentenhuisController.getById)
  * @param {Studentenhuis.model} studentenhuis.body.required - De nieuwe informatie over het studentenhuis
  * @returns {StudentenhuisResponse.model} 200 - Het gewijzigde (nieuwe) studentenhuis
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
+ * @returns {ApiError.model}  409 - Conflict (Gebruiker mag deze data niet wijzigen)
  * @returns {ApiError.model}  412 - Een of meer properties in de request body ontbreken of zijn foutief 
  */
 routes.put('/studentenhuis/:huisId', StudentenhuisController.update)
@@ -182,6 +184,7 @@ routes.get('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.get
  * @param {Maaltijd.model} maaltijd.body.required - De nieuwe maaltijd
  * @returns {MaaltijdResponse.model} 200 - De bijgewerkte maaltijd
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
+ * @returns {ApiError.model}  409 - Conflict (Gebruiker mag deze data niet wijzigen)
  * @returns {ApiError.model}  412 - Een of meer properties in de request body ontbreken of zijn foutief 
  */
 routes.put('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.update)
@@ -196,6 +199,7 @@ routes.put('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.upd
  * @group Maaltijd - Endpoints voor CRUD functionaliteit op een maaltijd.
  * @returns {object} 200 - Info over de status van de verwijderactie
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
+ * @returns {ApiError.model}  409 - Conflict (Gebruiker mag deze data niet verwijderen)
  */
 routes.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.delete)
 
@@ -211,6 +215,7 @@ routes.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.
  * @group Deelnemers - Endpoints voor CRUD functionaliteit op een deelnemer aan een maaltijd.
  * @returns {DeelnemerResponse.model} 200 - Informatie over de toegevoegde deelnemer
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
+ * @returns {ApiError.model}  409 - Conflict (Gebruiker is al aangemeld)
  */
 routes.post('/studentenhuis/:huisId/maaltijd/:maaltijdId', DeelnemerController.create)
 
@@ -222,7 +227,7 @@ routes.post('/studentenhuis/:huisId/maaltijd/:maaltijdId', DeelnemerController.c
  * 
  * @route GET /api/studentenhuis/{huisId}/maaltijd/{maaltijdId}/deelnemers
  * @group Deelnemers - Endpoints voor CRUD functionaliteit op een deelnemer aan een maaltijd.
- * @returns {Deelnemer.model} 200 - Een array met deelnemers aan de gegeven maaltijd in het gegeven studentenhuis.
+ * @returns {DeelnemerResponse.model} 200 - Een array met deelnemers aan de gegeven maaltijd in het gegeven studentenhuis.
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  */
 routes.get('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', DeelnemerController.getAll)
@@ -237,6 +242,7 @@ routes.get('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', DeelnemerCo
  * @group Deelnemers - Endpoints voor CRUD functionaliteit op een deelnemer aan een maaltijd.
  * @returns {object} 200 - Informatie over de verwijderactie
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
+ * @returns {ApiError.model}  409 - Conflict (Gebruiker mag deze data niet verwijderen)
  */
 routes.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId', DeelnemerController.delete)
 
