@@ -39,6 +39,7 @@ const DeelnemerController = require('../controllers/deelnemer.controller')
 
 /**
  * @typedef MaaltijdResponse
+ * @property {number} ID - De ID van de maaltijd
  * @property {string} naam - Naam van de maaltijd
  * @property {string} beschrijving - Korte beschrijving van de maaltijd.
  * @property {string} ingredienten - Ingredienten van de maaltijd, komma gescheiden.
