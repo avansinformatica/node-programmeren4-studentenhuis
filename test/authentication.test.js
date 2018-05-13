@@ -38,7 +38,7 @@ describe('Registration', () => {
                     token: validToken
                 }
                 done()
-        })
+            })
     })
 
     it('should return an error on GET request', (done) => {
@@ -118,4 +118,3 @@ describe('Login', () => {
     })
 
 })
-

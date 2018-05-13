@@ -89,10 +89,11 @@ routes.get('/studentenhuis', StudentenhuisController.getAll)
  * Retourneer het studentenhuis met de gegeven huisId. Iedere gebruiker kan alle studentenhuizen opvragen.
  * Authenticatie door middel van JWT is vereist.
  * 
- * @route GET /api/studentenhuis
+ * @route GET /api/studentenhuis{huisId}
  * @group Studentenhuis - Endpoints voor CRUD functionaliteit op een studentenhuis.
  * @returns {StudentenhuisResponse.model} 200 - Het studentenhuis met de gegeven huisId.
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
+ * @returns {ApiError.model}  404 - Niet gevonden (huisId bestaat niet)
  */
 routes.get('/studentenhuis/:huisId', StudentenhuisController.getById)
 
@@ -110,6 +111,7 @@ routes.get('/studentenhuis/:huisId', StudentenhuisController.getById)
  * @param {Studentenhuis.model} studentenhuis.body.required - De nieuwe informatie over het studentenhuis
  * @returns {StudentenhuisResponse.model} 200 - Het gewijzigde (nieuwe) studentenhuis
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
+ * @returns {ApiError.model}  404 - Niet gevonden (huisId bestaat niet)
  * @returns {ApiError.model}  409 - Conflict (Gebruiker mag deze data niet wijzigen)
  * @returns {ApiError.model}  412 - Een of meer properties in de request body ontbreken of zijn foutief 
  */
@@ -126,6 +128,7 @@ routes.put('/studentenhuis/:huisId', StudentenhuisController.update)
  * @returns {object} 200 - Info dat de verwijdering is gelukt.
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  * @returns {ApiError.model}  409 - Conflict (Gebruiker mag deze data niet verwijderen)
+ * @returns {ApiError.model}  404 - Niet gevonden (huisId bestaat niet)
  * @returns {ApiError.model}  412 - Een of meer properties in de request body ontbreken of zijn foutief 
  */
 routes.delete('/studentenhuis/:huisId', StudentenhuisController.delete)
@@ -143,6 +146,7 @@ routes.delete('/studentenhuis/:huisId', StudentenhuisController.delete)
  * @param {Maaltijd.model} maaltijd.body.required - Een object in de request body met de gegevens van de maaltijd
  * @returns {MaaltijdResponse.model} 200 - De maaltijd die toegevoegd is
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
+ * @returns {ApiError.model}  404 - Niet gevonden (huisId bestaat niet)
  * @returns {ApiError.model}  412 - Een of meer properties in de request body ontbreken of zijn foutief 
  */
 routes.post('/studentenhuis/:huisId/maaltijd', MaaltijdController.create)
@@ -156,6 +160,7 @@ routes.post('/studentenhuis/:huisId/maaltijd', MaaltijdController.create)
  * @group Maaltijd - Endpoints voor CRUD functionaliteit op een maaltijd.
  * @returns {MaaltijdResponse.model} 200 - Een array met alle maaltijden van het gegeven studentenhuis
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
+ * @returns {ApiError.model}  404 - Niet gevonden (huisId bestaat niet)
  */
 routes.get('/studentenhuis/:huisId/maaltijd', MaaltijdController.getAll)
 
@@ -184,6 +189,7 @@ routes.get('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.get
  * @param {Maaltijd.model} maaltijd.body.required - De nieuwe maaltijd
  * @returns {MaaltijdResponse.model} 200 - De bijgewerkte maaltijd
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
+ * @returns {ApiError.model}  404 - Niet gevonden (huisId of maaltijdId bestaat niet)
  * @returns {ApiError.model}  409 - Conflict (Gebruiker mag deze data niet wijzigen)
  * @returns {ApiError.model}  412 - Een of meer properties in de request body ontbreken of zijn foutief 
  */
@@ -199,6 +205,7 @@ routes.put('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.upd
  * @group Maaltijd - Endpoints voor CRUD functionaliteit op een maaltijd.
  * @returns {object} 200 - Info over de status van de verwijderactie
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
+ * @returns {ApiError.model}  404 - Niet gevonden (huisId of maaltijdId bestaat niet)
  * @returns {ApiError.model}  409 - Conflict (Gebruiker mag deze data niet verwijderen)
  */
 routes.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.delete)
@@ -215,6 +222,7 @@ routes.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.
  * @group Deelnemers - Endpoints voor CRD functionaliteit op een deelnemer aan een maaltijd.
  * @returns {DeelnemerResponse.model} 200 - Informatie over de toegevoegde deelnemer
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
+ * @returns {ApiError.model}  404 - Niet gevonden (huisId of maaltijdId bestaat niet)
  * @returns {ApiError.model}  409 - Conflict (Gebruiker is al aangemeld)
  */
 routes.post('/studentenhuis/:huisId/maaltijd/:maaltijdId', DeelnemerController.create)
@@ -229,6 +237,7 @@ routes.post('/studentenhuis/:huisId/maaltijd/:maaltijdId', DeelnemerController.c
  * @group Deelnemers - Endpoints voor CRD functionaliteit op een deelnemer aan een maaltijd.
  * @returns {DeelnemerResponse.model} 200 - Een array met deelnemers aan de gegeven maaltijd in het gegeven studentenhuis.
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
+ * @returns {ApiError.model}  404 - Niet gevonden (huisId of maaltijdId bestaat niet)
  */
 routes.get('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', DeelnemerController.getAll)
 
@@ -242,6 +251,7 @@ routes.get('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', DeelnemerCo
  * @group Deelnemers - Endpoints voor CRD functionaliteit op een deelnemer aan een maaltijd.
  * @returns {object} 200 - Informatie over de verwijderactie
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
+ * @returns {ApiError.model}  404 - Niet gevonden (huisId of maaltijdId bestaat niet)
  * @returns {ApiError.model}  409 - Conflict (Gebruiker mag deze data niet verwijderen)
  */
 routes.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId', DeelnemerController.delete)

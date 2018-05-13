@@ -1,0 +1,626 @@
+info:
+  version: '1.0.0'
+  description: >-
+    <p>Deze server toont de API beschrijving van de Nodejs server uit de
+    eindopdracht van Programmeren 4, periode 4, kans 1.</br>Neem deze routes
+    over in de uitwerking van je server. Neem ook de modellen van de parameters
+    en responses over.</p><p>Voor de responses hoef je in je uitwerking geen
+    JavaScript class te maken.</p><p><b>Let op</b>: wanneer een endpoint een
+    lijst of array retourneert gaat het om een array van het model dat daar
+    vermeld staat.
+  title: Avans Programmeren 4 - Studentenhuis casus
+host: mee-eten.herokuapp.com
+produces:
+  - application/json
+securityDefinitions:
+  JWT:
+    type: apiKey
+    name: x-access-token
+    in: header
+    description: >-
+      Register a new user or login an existing user, and fill in the received
+      token below.
+schemes:
+  - https
+swagger: '2.0'
+
+tags:
+  - name: 'Authentication '
+    description: ' Endpoints voor login en registratie.'
+  - name: 'Studentenhuis '
+    description: ' Endpoints voor CRUD functionaliteit op een studentenhuis.'
+  - name: 'Maaltijd '
+    description: ' Endpoints voor CRUD functionaliteit op een maaltijd.'
+  - name: 'Deelnemers '
+    description: ' Endpoints voor CRD functionaliteit op een deelnemer aan een maaltijd.'
+
+paths:
+  /api/login:
+    post:
+    summary: Log een bestaande user in
+      tags:
+        - 'Authentication '
+      parameters:
+        - in: body
+          name: body
+          description: The user's login info
+          required: true
+          schema:
+            $ref: '#/definitions/UserLoginJSON'
+      responses:
+        405:
+          description: Invalid input
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+      description: >-
+        Login. Vereist een JSON object in de request body, met daarin de
+        properties email en password.Deze zijn hieronder beschreven. 
+        Wanneer de combinatie van email en password correct is wordt een JSON
+        object met het token en het emailadres van de gebruiker geretourneerd. Als
+        emailadres of password niet valide zijn volgt een foutmelding.
+      responses:
+        '200 ':
+          description: ' Token informatie'
+          type: ValidToken
+          schema:
+            $ref: '#/definitions/ValidToken'
+        '401 ':
+          description: ' Niet geautoriseerd (geen valid token)'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+        '412 ':
+          description: ' Een of meer properties in de request body ontbreken of zijn foutief'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+  /api/register:
+    post:
+      parameters:
+        - description: De userinformatie waarmee je registreert
+          schema:
+            $ref: '#/definitions/UserRegisterJSON'
+      description: >-
+        Registreer een nieuwe gebruikers. Het emailadres van de gebruiker is
+        uniek.
+
+        Een gebruiker kan zich dus slechts 1 maal aanmelden met een emailadres. 
+
+        Vereist een JSON object in de request body, met daarin de properties 
+
+        firstname, lastname, email en password. Deze zijn hieronder beschreven.
+      tags:
+        - 'Authentication '
+      responses:
+        '200.OK ':
+          description: ' Token informatie'
+          type: ValidToken
+          schema:
+            $ref: '#/definitions/ValidToken'
+        '401 ':
+          description: ' Niet geautoriseerd (geen valid token)'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+        '412 ':
+          description: ' Een of meer properties in de request body ontbreken of zijn foutief'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+  /api/studentenhuis:
+    post:
+      parameters:
+        - name: studentenhuis
+          in: body
+          description: Een object in de request body met de gegevens van het studentenhuis.
+          required: true
+          type: Studentenhuis
+          schema:
+            $ref: '#/definitions/Studentenhuis'
+      description: >-
+        Maak een nieuw studentenhuis. De ID van de gebruiker die het
+        studentenhuis aanmaakt wordt bij het 
+
+        studentenhuis opgeslagen. Deze ID haal je uit het JWT token.
+
+        De correctheid van de informatie die wordt gegeven moet door de server
+        gevalideerd worden. 
+
+        Bij ontbrekende of foutieve invoer wordt een juiste foutmelding
+        geretourneerd.
+
+        Authenticatie door middel van JWT is vereist.
+      tags:
+        - 'Studentenhuis '
+      responses:
+        '200 ':
+          description: ' Het toegevoegde studentenhuis met ID en gebruikersinfo'
+          type: StudentenhuisResponse
+          schema:
+            $ref: '#/definitions/StudentenhuisResponse'
+        '401 ':
+          description: ' Niet geautoriseerd (geen valid token)'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+        '412 ':
+          description: ' Een of meer properties in de request body ontbreken of zijn foutief'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+    get:
+      parameters: []
+      description: >-
+        Retourneer het studentenhuis met de gegeven huisId. Iedere gebruiker kan
+        alle studentenhuizen opvragen.
+
+        Authenticatie door middel van JWT is vereist.
+      tags:
+        - 'Studentenhuis '
+      responses:
+        '200 ':
+          description: ' Het studentenhuis met de gegeven huisId.'
+          type: StudentenhuisResponse
+          schema:
+            $ref: '#/definitions/StudentenhuisResponse'
+        '401 ':
+          description: ' Niet geautoriseerd (geen valid token)'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+  '/api/studentenhuis/{huisId}':
+    put:
+      parameters:
+        - name: studentenhuis
+          in: body
+          description: De nieuwe informatie over het studentenhuis
+          required: true
+          type: Studentenhuis
+          schema:
+            $ref: '#/definitions/Studentenhuis'
+      description: >-
+        Vervang het studentenhuis met de gegeven huisId door de informatie van
+        het studentenhuis 
+
+        dat in de body is meegestuurd. Alleen de gebruiker die het studentenhuis
+        heeft aangemaakt
+
+        mag de informatie van dat studenenhuis wijzigen.
+
+        Deze ID haal je uit het JWT token.
+
+        De correctheid van de informatie die wordt gegeven moet door de server
+        gevalideerd worden. 
+
+        Bij ontbrekende of foutieve invoer wordt een juiste foutmelding
+        geretourneerd.
+
+        Authenticatie door middel van JWT is vereist.
+      tags:
+        - 'Studentenhuis '
+      responses:
+        '200 ':
+          description: ' Het gewijzigde (nieuwe) studentenhuis'
+          type: StudentenhuisResponse
+          schema:
+            $ref: '#/definitions/StudentenhuisResponse'
+        '401 ':
+          description: ' Niet geautoriseerd (geen valid token)'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+        '409 ':
+          description: ' Conflict (Gebruiker mag deze data niet wijzigen)'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+        '412 ':
+          description: ' Een of meer properties in de request body ontbreken of zijn foutief'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+    delete:
+      parameters: []
+      description: >-
+        Verwijder het studentenhuis met de gegeven huisId.
+
+        Een gebruiker kan alleen een studentenhuis verwijderen als hij dat zelf
+        heeft aangemaakt.
+
+        Deze ID haal je uit het JWT token.
+
+        Authenticatie door middel van JWT is vereist.
+      tags:
+        - 'Studentenhuis '
+      responses:
+        '200 ':
+          description: ' Info dat de verwijdering is gelukt.'
+          type: object
+        '401 ':
+          description: ' Niet geautoriseerd (geen valid token)'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+        '409 ':
+          description: ' Conflict (Gebruiker mag deze data niet verwijderen)'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+        '412 ':
+          description: ' Een of meer properties in de request body ontbreken of zijn foutief'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+  '/api/studentenhuis/{huisId}/maaltijd':
+    post:
+      parameters:
+        - name: maaltijd
+          in: body
+          description: Een object in de request body met de gegevens van de maaltijd
+          required: true
+          type: Maaltijd
+          schema:
+            $ref: '#/definitions/Maaltijd'
+      description: >-
+        Maak een nieuwe maaltijd voor een studentenhuis. De ID van de gebruiker
+        die de maaltijd
+
+        aanmaakt wordt opgeslagen bij de maaltijd. 
+
+        Deze ID haal je uit het JWT token.
+
+        De correctheid van de informatie die wordt gegeven moet door de server
+        gevalideerd worden. 
+
+        Bij ontbrekende of foutieve invoer wordt een juiste foutmelding
+        geretourneerd.
+
+        Authenticatie door middel van JWT is vereist.
+      tags:
+        - 'Maaltijd '
+      responses:
+        '200 ':
+          description: ' De maaltijd die toegevoegd is'
+          type: MaaltijdResponse
+          schema:
+            $ref: '#/definitions/MaaltijdResponse'
+        '401 ':
+          description: ' Niet geautoriseerd (geen valid token)'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+        '412 ':
+          description: ' Een of meer properties in de request body ontbreken of zijn foutief'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+    get:
+      parameters: []
+      description: >-
+        Retourneer alle maaltijden voor het studentenhuis met de gegeven
+        huisId. 
+
+        Iedere gebruiker kan alle maaltijden van alle studentenhuizen opvragen. 
+
+        Authenticatie door middel van JWT is vereist.
+      tags:
+        - 'Maaltijd '
+      responses:
+        '200 ':
+          description: ' Een array met alle maaltijden van het gegeven studentenhuis'
+          type: MaaltijdResponse
+          schema:
+            $ref: '#/definitions/MaaltijdResponse'
+        '401 ':
+          description: ' Niet geautoriseerd (geen valid token)'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+  '/api/studentenhuis/{huisId}/maaltijd/{maaltijdId}':
+    get:
+      parameters: []
+      description: |-
+        Retourneer de maaltijd met het gegeven maaltijdId.
+        Iedere gebruiker kan alle maaltijden van alle studentenhuizen opvragen.
+        Authenticatie door middel van JWT is vereist.
+      tags:
+        - 'Maaltijd '
+      responses:
+        '200 ':
+          description: ' De gevraagde maaltijdinformatie'
+          type: MaaltijdResponse
+          schema:
+            $ref: '#/definitions/MaaltijdResponse'
+        '401 ':
+          description: ' Niet geautoriseerd (geen valid token)'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+    put:
+      parameters:
+        - name: maaltijd
+          in: body
+          description: De nieuwe maaltijd
+          required: true
+          type: Maaltijd
+          schema:
+            $ref: '#/definitions/Maaltijd'
+      description: >-
+        Vervang de maaltijd met het gegeven maaltijdId door de nieuwe maaltijd
+        in de request body.
+
+        Alleen de gebruiker die de maaltijd heeft aangemaakt kan deze wijzigen.
+
+        De ID van de gebruiker haal je uit het JWT token.
+
+        De correctheid van de informatie die wordt gegeven moet door de server
+        gevalideerd worden.
+
+        Bij ontbrekende of foutieve invoer wordt een juiste foutmelding
+        geretourneerd.
+
+        Authenticatie door middel van JWT is vereist.
+      tags:
+        - 'Maaltijd '
+      responses:
+        '200 ':
+          description: ' De bijgewerkte maaltijd'
+          type: MaaltijdResponse
+          schema:
+            $ref: '#/definitions/MaaltijdResponse'
+        '401 ':
+          description: ' Niet geautoriseerd (geen valid token)'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+        '409 ':
+          description: ' Conflict (Gebruiker mag deze data niet wijzigen)'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+        '412 ':
+          description: ' Een of meer properties in de request body ontbreken of zijn foutief'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+    delete:
+      parameters: []
+      description: |-
+        Verwijder de maaltijd met het gegeven maaltijdId.
+        Alleen de gebruiker die de maaltijd heeft aangemaakt kan deze wijzigen.
+        De ID van de gebruiker haal je uit het JWT token.
+        Authenticatie door middel van JWT is vereist.
+      tags:
+        - 'Maaltijd '
+      responses:
+        '200 ':
+          description: ' Info over de status van de verwijderactie'
+          type: object
+        '401 ':
+          description: ' Niet geautoriseerd (geen valid token)'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+        '409 ':
+          description: ' Conflict (Gebruiker mag deze data niet verwijderen)'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+    post:
+      parameters: []
+      description: >-
+        Meld je aan voor een maaltijd in een studentenhuis. 
+
+        De user ID uit het token is dat van de gebruiker die zich aanmeldt. 
+
+        Die gebruiker wordt dus aan de lijst met aanmelders toegevoegd. 
+
+        Een gebruiker kan zich alleen aanmelden als hij niet al aan de maaltijd
+        deelneemt; 
+
+        anders volgt een foutmelding.
+
+        Authenticatie door middel van JWT is vereist.
+      tags:
+        - 'Deelnemers '
+      responses:
+        '200 ':
+          description: ' Informatie over de toegevoegde deelnemer'
+          type: DeelnemerResponse
+          schema:
+            $ref: '#/definitions/DeelnemerResponse'
+        '401 ':
+          description: ' Niet geautoriseerd (geen valid token)'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+        '409 ':
+          description: ' Conflict (Gebruiker is al aangemeld)'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+  '/api/studentenhuis/{huisId}/maaltijd/{maaltijdId}/deelnemers':
+    get:
+      parameters: []
+      description: >-
+        Geef de lijst met deelnemers voor de maaltijd met gegeven maaltijdID in
+        het studentenhuis met huisId. 
+
+        Deelnemers zijn geregistreerde gebruikers die zich hebben aangemeld voor
+        deze maaltijd.
+
+        Iedere gebruiker kan alle deelnemers van alle maaltijden in alle
+        studentenhuizen opvragen.
+
+        Authenticatie door middel van JWT is vereist.
+      tags:
+        - 'Deelnemers '
+      responses:
+        '200 ':
+          description: ' Een array met deelnemers aan de gegeven maaltijd in het gegeven studentenhuis.'
+          type: DeelnemerResponse
+          schema:
+            $ref: '#/definitions/DeelnemerResponse'
+        '401 ':
+          description: ' Niet geautoriseerd (geen valid token)'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+    delete:
+      parameters: []
+      description: >-
+        Verwijder een deelnemer.
+
+        De deelnemer die wordt verwijderd is de gebruiker met het ID uit het
+        token.
+
+        Een gebruiker kan alleen zijn eigen aanmelding verwijderen. 
+
+        Authenticatie door middel van JWT is vereist.
+      tags:
+        - 'Deelnemers '
+      responses:
+        '200 ':
+          description: ' Informatie over de verwijderactie'
+          type: object
+        '401 ':
+          description: ' Niet geautoriseerd (geen valid token)'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+        '409 ':
+          description: ' Conflict (Gebruiker mag deze data niet verwijderen)'
+          type: ApiError
+          schema:
+            $ref: '#/definitions/ApiError'
+definitions:
+  UserLoginJSON:
+    required:
+      - email
+      - password
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+  UserRegisterJSON:
+    required:
+      - firstname
+      - lastname
+      - email
+      - password
+    properties:
+      firstname:
+        type: string
+      lastname:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+  ApiError:
+    required:
+      - message
+      - code
+      - datetime
+    properties:
+      message:
+        type: string
+      code:
+        type: number
+      datetime:
+        type: string
+  ValidToken:
+    required:
+      - token
+      - email
+    properties:
+      token:
+        type: string
+      email:
+        type: string
+  Studentenhuis:
+    required:
+      - naam
+      - adres
+    properties:
+      naam:
+        type: string
+      adres:
+        type: string
+  StudentenhuisResponse:
+    required:
+      - ID
+      - naam
+      - adres
+      - contact
+      - email
+    properties:
+      ID:
+        type: number
+      naam:
+        type: string
+      adres:
+        type: string
+      contact:
+        type: string
+      email:
+        type: string
+  Maaltijd:
+    required:
+      - naam
+      - beschrijving
+      - ingredienten
+      - allergie
+      - prijs
+    properties:
+      naam:
+        type: string
+      beschrijving:
+        type: string
+      ingredienten:
+        type: string
+      allergie:
+        type: string
+      prijs:
+        type: number
+  MaaltijdResponse:
+    required:
+      - ID
+      - naam
+      - beschrijving
+      - ingredienten
+      - allergie
+      - prijs
+    properties:
+      ID:
+        type: number
+      naam:
+        type: string
+      beschrijving:
+        type: string
+      ingredienten:
+        type: string
+      allergie:
+        type: string
+      prijs:
+        type: number
+  Deelnemer:
+    required: []
+    properties: {}
+  DeelnemerResponse:
+    required:
+      - voornaam
+      - achternaam
+      - email
+    properties:
+      voornaam:
+        type: string
+      achternaam:
+        type: string
+      email:
+        type: string
+responses: {}
+parameters: {}

@@ -22,7 +22,7 @@ var connection;
 function handleDisconnect() {
     connection = mysql.createConnection(connectionSettings);
 
-    connection.connect(function (error) {
+    connection.connect((error) => {
         if (error) {
             console.error('Error connecting to database ' + connectionSettings.database + ' on ' + connectionSettings.host + ': ' + error.message);
             connection.end();
@@ -31,7 +31,7 @@ function handleDisconnect() {
             console.log('Connected to database ' + connectionSettings.database + ' on ' + connectionSettings.host + ', state = ' + connection.state);
         }
     });
-    connection.on('error', function (error) {
+    connection.on('error', (error) => {
         if (error.code === 'ECONNRESET') {
             console.error('Connection state = ' + connection.state + ' - reconnecting');
             connection.end();

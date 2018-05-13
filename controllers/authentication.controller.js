@@ -22,7 +22,6 @@ module.exports = {
      */
     validateToken(req, res, next) {
         // console.log('validateToken called')
-        console.dir(req.headers)
 
         /**
          * A token can be sent in the body of a request, via a query parameter (in the URL),
