@@ -223,14 +223,14 @@ routes.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.
  * anders volgt een foutmelding.
  * Authenticatie door middel van JWT is vereist. 
  * 
- * @route POST /api/studentenhuis/{huisId}/maaltijd/{maaltijdId}
+ * @route POST /api/studentenhuis/{huisId}/maaltijd/{maaltijdId}/deelnemers
  * @group Deelnemers - Endpoints voor CRD functionaliteit op een deelnemer aan een maaltijd.
  * @returns {DeelnemerResponse.model} 200 - Informatie over de toegevoegde deelnemer
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  * @returns {ApiError.model}  404 - Niet gevonden (huisId of maaltijdId bestaat niet)
  * @returns {ApiError.model}  409 - Conflict (Gebruiker is al aangemeld)
  */
-routes.post('/studentenhuis/:huisId/maaltijd/:maaltijdId', DeelnemerController.create)
+routes.post('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', DeelnemerController.create)
 
 /**
  * Geef de lijst met deelnemers voor de maaltijd met gegeven maaltijdID in het studentenhuis met huisId. 
