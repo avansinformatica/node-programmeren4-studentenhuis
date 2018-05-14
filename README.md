@@ -1,7 +1,11 @@
-# Nodejs uitwerking van tentamen Programmeren 4 
-Nodejs server die een api biedt voor functionaliteit rond users, studentenhuizen, maaltijden en deelnemers aan een maaltijd. Users kunnen zich registreren en een studentenhuis maken. Binnen een studentenhuis kan een maaltijd gemaakt worden. Andere users kunnen deelnemen aan een maaltijd.
+# Nodejs Programmeren 4 tentamen - Studentenhuis
+Nodejs server die een api biedt voor functionaliteit rond users, studentenhuizen, maaltijden en deelnemers aan een maaltijd. Users kunnen zich registreren en een studentenhuis maken. Binnen een studentenhuis kan een maaltijd gemaakt worden. Andere users kunnen deelnemen aan een maaltijd. De app maakt gebruik van een MySQL database.
 
-This basic server contains:
+## Documentation
+See the Swagger documentation on (http://localhost:3000/api-docs/)[http://localhost:3000/api-docs/] and online on (Heroku)[https://mee-eten.herokuapp.com/api-docs/].
+
+## Contents
+This server contains:
 1. Express routing and error handling via next()
 2. JavaScript classes for OO-like programming
 3. Many async functions illustrating async behavior of Nodejs
@@ -10,6 +14,7 @@ This basic server contains:
 6. Hashed passwords using bcrypt
 7. Examples of BDD testcases using [Mocha](https://mochajs.org/), [Chai](http://www.chaijs.com/) and [Should](http://www.chaijs.com/api/bdd/)
 8. Tests are run online on [Travis CI](https://travis-ci.org/avansinformatica/node-basic-server)
+9. Swagger documentation
 
 ## Requirements
 - nodejs 
@@ -30,3 +35,4 @@ For testing:
 ```
 npm test
 ```
+
