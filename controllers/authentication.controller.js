@@ -37,8 +37,8 @@ module.exports = {
                 const error = new ApiError(err.message || err, 401)
                 next(error)
             } else {
-                logger.info('Authenticated! Payload = ')
-                logger.info(payload)
+                logger.trace('Authenticated! Payload = ')
+                logger.trace(payload)
 
                 /**
                  * The payload contains the values that were put in it via the sub-field.

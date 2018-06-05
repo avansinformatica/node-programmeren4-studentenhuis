@@ -20,14 +20,23 @@ let validToken
 describe('Registration', () => {
 
     before(function () {
-        // delete any existing dummy user from the database.
+        // Before registration, delete our existing dummy data from the database.
         // Ideally we want a separate database for running tests.
         try {
-            const query = 'DELETE FROM `user` WHERE `Email` = ?'
-            const values = [email]
+            // const query = 'DELETE FROM `user` WHERE `Email` = ?'
+            let query = 'DELETE FROM `studentenhuis` WHERE `UserID` = (SELECT `ID` FROM `user` WHERE `Email` = ?)'
+            let values = [email]
             db.query(query, values, (err, rows, fields) => {
                 if (err) {
-                    logger.error(err)
+                    logger.error(err.toString())
+                }
+            })
+
+            query = 'DELETE FROM `user` WHERE `Email` = ?'
+            values = [email]
+            db.query(query, values, (err, rows, fields) => {
+                if (err) {
+                    logger.error(err.toString())
                 }
             })
         } catch (ex) {
