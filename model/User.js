@@ -4,19 +4,13 @@
 const assert = require('assert')
 const ApiError = require('./ApiError')
 const bcrypt = require('bcryptjs');
-
-function validateEmail(email) {
-    const validator = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return validator.test(email);
-}
-
-// To verify that validateEmail works as expected:
-// console.log('testing email: ' + validateEmail('test.server@test.com'))
+const validateEmail = require('../util/emailvalidator')
+const logger = require('../config/config').logger
 
 class User {
 
     constructor(firstname, lastname, email, password) {
-        console.log('User constructor')
+        logger.info('User constructor')
         // Verify that we only create valid Users
         try {
             assert(typeof (firstname) === 'string', 'firstname must be a string')
@@ -28,7 +22,7 @@ class User {
             assert(validateEmail(email.trim()), 'email must be a valid emailaddress')
             assert(password.trim().length > 2, 'password must be at least 3 characters')
         } catch (ex) {
-            console.log(ex.toString())
+            logger.error(ex.toString())
             /**
              * We cannot handle the error by Express next(), so we throw it here.
              * The calling function must surround this constructor with try/catch

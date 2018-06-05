@@ -46,7 +46,8 @@ ALTER TABLE `studentenhuis`
 ADD CONSTRAINT `fk_studentenhuis_user`
 FOREIGN KEY (`UserID`) REFERENCES `user` (`ID`)
 ON DELETE NO ACTION
-ON UPDATE CASCADE;
+ON UPDATE CASCADE
+;
 
 -- Voorbeeld insert query. Wanneer je in Nodejs de ? variant gebruikt hoeven de '' niet om de waarden.
 INSERT INTO `studentenhuis` (Naam, Adres, UserID) VALUES ('Lovensdijk', 'Lovensdijkstraat, Breda', 1);
@@ -72,15 +73,20 @@ ALTER TABLE `maaltijd`
 ADD CONSTRAINT `fk_maaltijd_user`
 FOREIGN KEY (`UserID`) REFERENCES `user` (`ID`)
 ON DELETE NO ACTION
-ON UPDATE CASCADE,
+ON UPDATE CASCADE
+,
 ADD CONSTRAINT `fk_maaltijd_studentenhuis`
 FOREIGN KEY (`StudentenhuisID`) REFERENCES `studentenhuis` (`ID`)
 ON DELETE NO ACTION
-ON UPDATE CASCADE;
+ON UPDATE CASCADE
+;
 
 -- Voorbeeld insert query.
 INSERT INTO `maaltijd` (Naam, Beschrijving, Ingredienten, Allergie, Prijs, UserID, StudentenhuisID) VALUES 
-('Zuurkool met worst', 'Zuurkool a la Montizaan, specialiteit van het huis.', 'Zuurkool, worst, spekjes', 'Lactose, gluten', 5, 1, 1);
+('Zuurkool met worst', 'Zuurkool a la Montizaan, specialiteit van het huis.', 'Zuurkool, worst, spekjes', 'Lactose, gluten', 5, 1, 1),
+('Spaghetti', 'Spaghetti Bolognese', 'Pasta, tomatensaus, gehakt', 'Lactose', 3, 1, 1);
+-- Voorbeeld delete query
+-- DELETE FROM `maaltijd` WHERE `Naam` = 'Spaghetti';
 
 -- -----------------------------------------------------
 -- Table `deelnemers`
@@ -100,18 +106,21 @@ ALTER TABLE `deelnemers`
 ADD CONSTRAINT `fk_deelnemers_user`
 FOREIGN KEY (`UserID`) REFERENCES `user` (`ID`)
 ON DELETE NO ACTION
-ON UPDATE CASCADE,
+ON UPDATE CASCADE
+,
 ADD CONSTRAINT `fk_deelnemers_studentenhuis`
 FOREIGN KEY (`StudentenhuisID`) REFERENCES `studentenhuis` (`ID`)
 ON DELETE NO ACTION
-ON UPDATE CASCADE,
+ON UPDATE CASCADE
+,
 ADD CONSTRAINT `fk_deelnemers_maaltijd`
 FOREIGN KEY (`MaaltijdID`) REFERENCES `maaltijd` (`ID`)
 ON DELETE NO ACTION
-ON UPDATE CASCADE;
+ON UPDATE CASCADE
+;
 
 -- Voorbeeld insert query.
--- Let op: je kunt je maar één keer aanmelden voor een maaltijd in een huis.
+-- Let op: je kunt je maar ï¿½ï¿½n keer aanmelden voor een maaltijd in een huis.
 -- Je kunt je natuurlijk wel afmelden en opnieuw aanmelden. .
 INSERT INTO `deelnemers` (UserID, StudentenhuisID, MaaltijdID) VALUES (1, 1, 1);
 -- Voorbeeld van afmelden:

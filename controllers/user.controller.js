@@ -4,6 +4,7 @@
 const User = require('../model/User')
 const ApiError = require('../model/ApiError')
 const assert = require('assert')
+const logger = require('../config/config').logger
 
 module.exports = {
 
@@ -49,7 +50,7 @@ module.exports = {
     getAllUsers(req, res, next) {
         // When authenticated (which we are at this point), we have the user info in the request.
         // We can use that for example for logging or monitoring.
-        console.log('User info in getAllPersons: ' + req.user)
+        logger.info('User info in getAllPersons: ' + req.user)
         res.status(200).json({
             message: "todo!"
         }).end();

@@ -3,7 +3,8 @@
 //
 const ApiError = require('../model/ApiError')
 const assert = require('assert')
-const db = require('../config/db.improved')
+const db = require('../config/db')
+const logger = require('../config/config').logger
 
 module.exports = {
 
@@ -27,13 +28,29 @@ module.exports = {
                         const error = new ApiError(err, 412)
                         next(error);
                     } else {
+                        // console.log('voor query')
+                        // db.query('SELECT * FROM `studentenhuis` WHERE ID = ?', [rows.insertId],
+                        //     (err, rows, fields) => {
+                        //         if (err) {
+                        //             console.log('error ---')
+                        //             const error = new ApiError(err, 412)
+                        //             next(error);
+                        //         } else {
+                        //             console.log('result ---')
+                        //             console.log('res = ' + res)
+                        //             res.status(200).json({
+                        //                 status: rows
+                        //             }).end()
+                        //         }
+                        //     })
+
                         res.status(200).json({
                             status: rows
                         }).end()
                     }
                 })
         } catch (ex) {
-            console.log(ex)
+            logger.error(ex)
             const error = new ApiError(ex, 412)
             next(error);
         }
@@ -56,7 +73,7 @@ module.exports = {
                     }
                 })
         } catch (ex) {
-            console.log(ex)
+            logger.error(ex)
             const error = new ApiError(ex, 412)
             next(error);
         }
@@ -86,7 +103,7 @@ module.exports = {
                     }
                 })
         } catch (ex) {
-            console.log(ex)
+            logger.error(ex)
             const error = new ApiError(ex, 412)
             next(error);
         }

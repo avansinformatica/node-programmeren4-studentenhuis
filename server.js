@@ -7,7 +7,8 @@ const studentenhuisroutes = require('./routes/studentenhuis.routes')
 const AuthController = require('./controllers/authentication.controller')
 const ApiError = require('./model/ApiError')
 const settings = require('./config/config')
-const db = require('./config/db.improved');
+const logger = settings.logger
+const db = require('./config/db');
 
 const port = process.env.PORT || settings.webPort
 const httpSchemes = process.env.NODE_ENV === 'production' ? ['https'] : ['http']
@@ -99,7 +100,7 @@ app.use((err, req, res, next) => {
 
 // Start listening for incoming requests.
 app.listen(port, () => {
-	console.log('Server running on port ' + port)
+	logger.info('Server running on port ' + port)
 })
 
 // Testcases need our app - export it.

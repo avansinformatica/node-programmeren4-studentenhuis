@@ -6,7 +6,9 @@ const ApiError = require('../model/ApiError')
 const User = require('../model/User')
 const auth = require('../util/auth/authentication')
 const bcrypt = require('bcryptjs')
-const db = require('../config/db.improved')
+const db = require('../config/db')
+const validateEmail = require('../util/emailvalidator')
+const logger = require('../config/config').logger
 
 module.exports = {
 
@@ -21,7 +23,7 @@ module.exports = {
      * @param {*} next ApiError when token is invalid, or req containing logged-in user.
      */
     validateToken(req, res, next) {
-        // console.log('validateToken called')
+        // logger.info('validateToken called')
 
         /**
          * A token can be sent in the body of a request, via a query parameter (in the URL),
@@ -35,8 +37,8 @@ module.exports = {
                 const error = new ApiError(err.message || err, 401)
                 next(error)
             } else {
-                console.log('Authenticated! Payload = ')
-                console.dir(payload)
+                logger.info('Authenticated! Payload = ')
+                logger.info(payload)
 
                 /**
                  * The payload contains the values that were put in it via the sub-field.
@@ -64,7 +66,8 @@ module.exports = {
      * 
      * Security issue: the password is probably typed-in by the client and sent as 
      * plain text. Anyone listening on the network could read the password. The 
-     * connection should therefore be secured and encrypted.
+     * connection should therefore be secured and encrypted. Another option is to
+     * encrypt the password on the client side and send it encrypted.
      * 
      * @param {*} req The incoming request, should contain valid JWT token in headers.
      * @param {*} res The token, additional user information, and status 200 when valid.
@@ -89,13 +92,13 @@ module.exports = {
             } else {
                 // Login kan alleen als het emailadres bestaat
                 // Was er een resultaat? Zo ja, check het password.
-                // console.log('Result from database: ')
-                // console.dir(rows)
-                // console.log('password = ' + rows[0].Password)
+                // logger.info('Result from database: ')
+                // logger.info(rows)
+                // logger.info('password = ' + rows[0].Password)
                 if (rows && rows.length === 1 && rows[0].Email !== undefined) {
                     bcrypt.compare(req.body.password, rows[0].Password, (err, success) => {
                         if (success) {
-                            console.log('passwords DID match, sending valid token')
+                            logger.info('passwords DID match, sending valid token')
                             // Create an object containing the data we want in the payload.
                             const payload = {
                                 user: rows[0].Email,
@@ -129,13 +132,17 @@ module.exports = {
      * @param {*} next ApiError when supplied properties are invalid.
      */
     register(req, res, next) {
-        // console.log('register')
-        // console.log(req.body)
+        // logger.info('register')
+        // logger.info(req.body)
         try {
             assert(typeof (req.body.firstname) === 'string', 'firstname must be a string.')
             assert(typeof (req.body.lastname) === 'string', 'lastname must be a string.')
             assert(typeof (req.body.email) === 'string', 'email must be a string.')
             assert(typeof (req.body.password) === 'string', 'password must be a string.')
+            assert(req.body.firstname.trim().length > 2, 'firstname must be at least 3 characters')
+            assert(req.body.lastname.trim().length > 2, 'lastname must be at least 3 characters')
+            assert(validateEmail(req.body.email.trim()), 'email must be a valid emailaddress')
+            assert(req.body.password.trim().length > 2, 'password must be at least 3 characters')
         } catch (ex) {
             const error = new ApiError(ex.toString(), 412)
             next(error)
@@ -147,8 +154,8 @@ module.exports = {
                 const error = new ApiError(err, 412)
                 next(error);
             } else {
-                // console.log('found results')
-                // console.dir(rows)
+                // logger.info('found results')
+                // logger.info(rows)
 
                 if (rows.length > 0) {
                     const error = new ApiError('Email already exists', 412)
@@ -164,7 +171,7 @@ module.exports = {
                             req.body.email,
                             req.body.password
                         )
-                        console.dir(user)
+                        logger.info(user)
 
                         db.query('INSERT INTO `user` (Voornaam, Achternaam, Email, Password) VALUES (?, ?, ?, ?)', [user.name.firstname, user.name.lastname, user.email, user.password],
                             (err, rows, fields) => {
