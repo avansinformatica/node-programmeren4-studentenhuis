@@ -26,6 +26,7 @@ let options = {
 	swaggerDefinition: {
 		info: {
 			title: 'Avans Programmeren 4 - Studentenhuis casus',
+			version: '1.0.0',
 			description: description
 		},
 		host: process.env.ALLOW_ORIGIN || 'mee-eten.herokuapp.com',
@@ -35,15 +36,12 @@ let options = {
 		securityDefinitions: {
 			JWT: {
 				type: "apiKey",
-				name: "x-access-token",
 				in: "header",
+				name: "x-access-token",
 				description: "Register a new user or login an existing user, and fill in the received token below."
 			}
 		},
 		schemes: httpSchemes
-	},
-	security: {
-		JWT: []
 	},
 	basedir: __dirname,
 	files: ['./routes/**/*.js']
@@ -72,29 +70,39 @@ app.use('*', function (req, res, next) {
 	next()
 })
 
-// Unprotected routes - no token required.
-// Provides login and registration 
+// UNPROTECTED endpoints for authentication - no token required.
+// Provide login and registration 
 app.use('/api', authenticationroutes)
 
-// On all other routes, check for API key
-// app.all('*', (req, res, next) => { });
+// Workaround for authentication
+// We do not use a token here, but require the caller to supply the UserID as a
+// field in the header. 
+app.all('*', AuthController.validateUser);
+
+//
+// UNPROTECTED endpoints - open for Programmeren 3 Android casus
+//
+app.use('/api/open', user_routes)
+app.use('/api/open', studentenhuisroutes)
+
+// JWT TOKEN VALIDATION for authentication
 app.all('*', AuthController.validateToken);
 
-// Regular endpoints
+// PROTECTED endpoints
 app.use('/api', user_routes)
 app.use('/api', studentenhuisroutes)
 
 // Postprocessing; catch all non-existing endpoint requests
 app.use('*', function (req, res, next) {
-	// console.log('Non-existing endpoint')
-	const error = new ApiError("Deze endpoint bestaat niet", 404)
+	// logger.error('Non-existing endpoint')
+	const error = new ApiError('Non-existing endpoint', 404)
 	next(error)
 })
 
 // Catch-all error handler according to Express documentation - err should always be an ApiError! 
 // See also http://expressjs.com/en/guide/error-handling.html
 app.use((err, req, res, next) => {
-	// console.dir(err)
+	logger.error(err)
 	res.status((err.code || 404)).json(err).end()
 })
 

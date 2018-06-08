@@ -17,6 +17,9 @@ const DeelnemerController = require('../controllers/deelnemer.controller')
  * @typedef Studentenhuis
  * @property {string} naam.required - De naam van het studentenhuis
  * @property {string} adres.required - Straatnaam en huisnummer van het studentenhuis
+ * @property {string} lat.required - Latitude Geo coördinaten van het studentenhuis
+ * @property {string} long.required - Longitude Geo coördinaten van het studentenhuis
+ * @property {string} image - Optionele afbeelding van het studentenhuis
  */
 
 /**
@@ -26,6 +29,9 @@ const DeelnemerController = require('../controllers/deelnemer.controller')
  * @property {string} adres.required - Straatnaam en huisnummer van het studentenhuis
  * @property {string} contact.required - De voor en achternaam van de gebruiker die het studentenhuis heeft aangemaakt.
  * @property {string} email.required - Email van de gebruiker die het studentenhuis heeft aangemaakt.
+ * @property {string} lat.required - Latitude Geo coördinaten van het studentenhuis
+ * @property {string} long.required - Longitude Geo coördinaten van het studentenhuis
+ * @property {string} image - Afbeelding van het studentenhuis
  */
 
 /**
@@ -35,6 +41,7 @@ const DeelnemerController = require('../controllers/deelnemer.controller')
  * @property {string} ingredienten.required - Ingredienten van de maaltijd, komma gescheiden.
  * @property {string} allergie.required - Allergie informatie van de maaltijd.
  * @property {number} prijs.required - Prijs van de maaltijd (alleen gehele getallen).
+ * @property {string} image - Afbeelding van de maaltijd
  */
 
 /**
@@ -45,6 +52,7 @@ const DeelnemerController = require('../controllers/deelnemer.controller')
  * @property {string} ingredienten.required - Ingredienten van de maaltijd, komma gescheiden.
  * @property {string} allergie.required - Allergie informatie van de maaltijd.
  * @property {number} prijs.required - Prijs van de maaltijd (alleen gehele getallen).
+ * @property {string} image - Afbeelding van de maaltijd
  */
 
 /**
@@ -52,6 +60,7 @@ const DeelnemerController = require('../controllers/deelnemer.controller')
  * @property {string} voornaam.required
  * @property {string} achternaam.required
  * @property {string} email.required
+ * @property {string} image - Afbeelding van de deelnemer
  */
 
 /**

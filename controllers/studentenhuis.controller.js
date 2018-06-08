@@ -15,6 +15,8 @@ module.exports = {
             assert(typeof (req.body) === 'object', 'request body must have an object containing naam and adres.')
             assert(typeof (req.body.naam) === 'string', 'naam must be a string.')
             assert(typeof (req.body.adres) === 'string', 'adres must be a string.')
+            assert(typeof (req.body.lat) === 'string', 'lat must be a string.')
+            assert(typeof (req.body.long) === 'string', 'long must be a string.')
         } catch (ex) {
             const error = new ApiError(ex.toString(), 500)
             next(error)
@@ -22,28 +24,13 @@ module.exports = {
         }
 
         try {
-            db.query('INSERT INTO `studentenhuis` (Naam, Adres, UserID) VALUES (?,?,?)', [req.body.naam, req.body.adres, req.user.id],
+            db.query('INSERT INTO `studentenhuis` (`Naam`, `Adres`, `UserID`, `Lat`, `Long`) VALUES (?,?,?,?,?)', 
+                [req.body.naam, req.body.adres, req.user.id, req.body.lat, req.body.long],
                 (err, rows, fields) => {
                     if (err) {
-                        const error = new ApiError(err, 412)
+                        const error = new ApiError(err.toString(), 412)
                         next(error);
                     } else {
-                        // console.log('voor query')
-                        // db.query('SELECT * FROM `studentenhuis` WHERE ID = ?', [rows.insertId],
-                        //     (err, rows, fields) => {
-                        //         if (err) {
-                        //             console.log('error ---')
-                        //             const error = new ApiError(err, 412)
-                        //             next(error);
-                        //         } else {
-                        //             console.log('result ---')
-                        //             console.log('res = ' + res)
-                        //             res.status(200).json({
-                        //                 status: rows
-                        //             }).end()
-                        //         }
-                        //     })
-
                         res.status(200).json({
                             status: rows
                         }).end()

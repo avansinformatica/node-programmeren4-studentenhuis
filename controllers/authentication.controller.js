@@ -173,7 +173,8 @@ module.exports = {
                         )
                         logger.info(user)
 
-                        db.query('INSERT INTO `user` (Voornaam, Achternaam, Email, Password) VALUES (?, ?, ?, ?)', [user.name.firstname, user.name.lastname, user.email, user.password],
+                        db.query('INSERT INTO `user` (Voornaam, Achternaam, Email, Password, Image) VALUES (?, ?, ?, ?, ?)', 
+                            [user.name.firstname, user.name.lastname, user.email, user.password, req.body.image],
                             (err, rows, fields) => {
                                 if (err) {
                                     const error = new ApiError(err, 412)
@@ -187,7 +188,8 @@ module.exports = {
                                     // Userinfo returned to the caller.
                                     const userinfo = {
                                         token: auth.encodeToken(payload),
-                                        email: user.email
+                                        email: user.email,
+                                        userid: rows.insertId
                                     }
                                     res.status(200).json(userinfo).end()
                                 }
@@ -198,6 +200,23 @@ module.exports = {
                 }
             }
         })
+    },
+
+    /**
+     * Function to extract a UserID field from the header.
+     * This method is used on the open routes, when we do not have a token
+     * to identify a user from.
+     */
+    validateUser(req, res, next) {
+        logger.info('validateUser called')
+
+        const userID = req.header('UserID') || ''
+        logger.trace('UserID found in header. UserID = ', userID)
+
+        req.user = {
+            id: userID
+        }
+        next()
     }
 
 }

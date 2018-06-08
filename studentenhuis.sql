@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 	`Achternaam` VARCHAR(32) NOT NULL,
 	`Email` VARCHAR(32) NOT NULL,
 	`Password` CHAR(64) BINARY NOT NULL,
+	`Image` LONGBLOB,
 	PRIMARY KEY (`ID`)
 ) 
 ENGINE = InnoDB;
@@ -36,8 +37,11 @@ DROP TABLE IF EXISTS `studentenhuis` ;
 CREATE TABLE IF NOT EXISTS `studentenhuis` (
 	`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`Naam` VARCHAR(32) NOT NULL,
-	`Adres` VARCHAR(32) DEFAULT 'hier het adres',
+	`Adres` VARCHAR(32),
 	`UserID` INT UNSIGNED NOT NULL,
+	`Lat` FLOAT( 10, 6 ) NOT NULL ,
+	`Long` FLOAT( 10, 6 ) NOT NULL,
+	`Image` LONGBLOB,
 	PRIMARY KEY (`ID`)
 ) 
 ENGINE = InnoDB;
@@ -46,11 +50,10 @@ ALTER TABLE `studentenhuis`
 ADD CONSTRAINT `fk_studentenhuis_user`
 FOREIGN KEY (`UserID`) REFERENCES `user` (`ID`)
 ON DELETE NO ACTION
-ON UPDATE CASCADE
-;
+ON UPDATE CASCADE;
 
 -- Voorbeeld insert query. Wanneer je in Nodejs de ? variant gebruikt hoeven de '' niet om de waarden.
-INSERT INTO `studentenhuis` (Naam, Adres, UserID) VALUES ('Lovensdijk', 'Lovensdijkstraat, Breda', 1);
+INSERT INTO `studentenhuis` (`Naam`, `Adres`, `UserID`, `Lat`, `Long`) VALUES ('Lovensdijk', 'Lovensdijkstraat, Breda', 1, 51.585877, 4.7900683);
 
 -- -----------------------------------------------------
 -- Table `maaltijd`
@@ -65,6 +68,7 @@ CREATE TABLE IF NOT EXISTS `maaltijd` (
 	`Prijs` INT UNSIGNED  NOT NULL,
 	`UserID` INT UNSIGNED NOT NULL,
 	`StudentenhuisID` INT UNSIGNED NOT NULL,
+	`Image` LONGBLOB,
 	PRIMARY KEY (`ID`)
 ) 
 ENGINE = InnoDB;
@@ -120,7 +124,7 @@ ON UPDATE CASCADE
 ;
 
 -- Voorbeeld insert query.
--- Let op: je kunt je maar ��n keer aanmelden voor een maaltijd in een huis.
+-- Let op: je kunt je maar 1 keer aanmelden voor een maaltijd in een huis.
 -- Je kunt je natuurlijk wel afmelden en opnieuw aanmelden. .
 INSERT INTO `deelnemers` (UserID, StudentenhuisID, MaaltijdID) VALUES (1, 1, 1);
 -- Voorbeeld van afmelden:
@@ -137,6 +141,9 @@ SELECT
 	`studentenhuis`.`ID`,
 	`studentenhuis`.`Naam`,
 	`studentenhuis`.`Adres`,
+	`studentenhuis`.`Lat`,
+	`studentenhuis`.`Long`,
+	`studentenhuis`.`Image`,
 	CONCAT(`user`.`Voornaam`, ' ', `user`.`Achternaam`) AS `Contact`,
 	`user`.`Email`
 FROM `studentenhuis`
@@ -154,7 +161,8 @@ SELECT
 	`deelnemers`.`MaaltijdID`,
 	`user`.`Voornaam`,
 	`user`.`Achternaam`,
-	`user`.`Email`
+	`user`.`Email`,
+	`user`.`Image`
 FROM `deelnemers`
 LEFT JOIN `user` ON `deelnemers`.`UserID` = `user`.`ID`;
 
