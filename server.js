@@ -74,17 +74,6 @@ app.use('*', function (req, res, next) {
 // Provide login and registration 
 app.use('/api', authenticationroutes)
 
-// Workaround for authentication
-// We do not use a token here, but require the caller to supply the UserID as a
-// field in the header. 
-app.all('*', AuthController.validateUser);
-
-//
-// UNPROTECTED endpoints - open for Programmeren 3 Android casus
-//
-app.use('/api/open', user_routes)
-app.use('/api/open', studentenhuisroutes)
-
 // JWT TOKEN VALIDATION for authentication
 app.all('*', AuthController.validateToken);
 

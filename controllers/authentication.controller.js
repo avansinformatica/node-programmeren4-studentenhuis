@@ -107,7 +107,8 @@ module.exports = {
                             // Userinfo returned to the caller.
                             const userinfo = {
                                 token: auth.encodeToken(payload),
-                                email: rows[0].Email
+                                email: rows[0].Email,
+                                userid: rows[0].ID
                             }
                             res.status(200).json(userinfo).end()
                         } else {
@@ -200,23 +201,6 @@ module.exports = {
                 }
             }
         })
-    },
-
-    /**
-     * Function to extract a UserID field from the header.
-     * This method is used on the open routes, when we do not have a token
-     * to identify a user from.
-     */
-    validateUser(req, res, next) {
-        logger.info('validateUser called')
-
-        const userID = req.header('UserID') || ''
-        logger.trace('UserID found in header. UserID = ', userID)
-
-        req.user = {
-            id: userID
-        }
-        next()
     }
 
 }
