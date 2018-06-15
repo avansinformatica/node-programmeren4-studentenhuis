@@ -80,30 +80,6 @@ const DeelnemerController = require('../controllers/deelnemer.controller')
 routes.post('/studentenhuis', StudentenhuisController.create)
 
 /**
- * Retourneer een lijst met alle studentenhuizen. Iedere gebruiker kan alle studentenhuizen opvragen.
- * Authenticatie door middel van JWT is vereist.
- * 
- * @route GET /api/studentenhuis
- * @group Studentenhuis - Endpoints voor CRUD functionaliteit op een studentenhuis.
- * @returns {StudentenhuisResponse.model} 200 - Een array met studentenhuizen.
- * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
- */
-routes.get('/studentenhuis', StudentenhuisController.getAll)
-
-/**
- * Retourneer het studentenhuis met de gegeven huisId. Iedere gebruiker kan alle studentenhuizen opvragen.
- * Als er geen studentenhuis met de gevraagde huisId bestaat wordt een juiste foutmelding geretourneerd.  
- * Authenticatie door middel van JWT is vereist.
- * 
- * @route GET /api/studentenhuis/{huisId}
- * @group Studentenhuis - Endpoints voor CRUD functionaliteit op een studentenhuis.
- * @returns {StudentenhuisResponse.model} 200 - Het studentenhuis met de gegeven huisId.
- * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
- * @returns {ApiError.model}  404 - Niet gevonden (huisId bestaat niet)
- */
-routes.get('/studentenhuis/:huisId', StudentenhuisController.getById)
-
-/**
  * Vervang het studentenhuis met de gegeven huisId door de informatie van het studentenhuis 
  * dat in de body is meegestuurd. Alleen de gebruiker die het studentenhuis heeft aangemaakt
  * mag de informatie van dat studenenhuis wijzigen.
@@ -161,33 +137,6 @@ routes.delete('/studentenhuis/:huisId', StudentenhuisController.delete)
 routes.post('/studentenhuis/:huisId/maaltijd', MaaltijdController.create)
 
 /**
- * Retourneer alle maaltijden voor het studentenhuis met de gegeven huisId. 
- * Als er geen studentenhuis met de gevraagde huisId bestaat wordt een juiste foutmelding geretourneerd.
- * Iedere gebruiker kan alle maaltijden van alle studentenhuizen opvragen. 
- * Authenticatie door middel van JWT is vereist.
- * 
- * @route GET /api/studentenhuis/{huisId}/maaltijd
- * @group Maaltijd - Endpoints voor CRUD functionaliteit op een maaltijd.
- * @returns {MaaltijdResponse.model} 200 - Een array met alle maaltijden van het gegeven studentenhuis
- * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
- * @returns {ApiError.model}  404 - Niet gevonden (huisId bestaat niet)
- */
-routes.get('/studentenhuis/:huisId/maaltijd', MaaltijdController.getAll)
-
-/**
- * Retourneer de maaltijd met het gegeven maaltijdId.
- * Als er geen studentenhuis of maaltijd met de gevraagde Id bestaat wordt een juiste foutmelding geretourneerd.
- * Iedere gebruiker kan alle maaltijden van alle studentenhuizen opvragen.
- * Authenticatie door middel van JWT is vereist.
- * 
- * @route GET /api/studentenhuis/{huisId}/maaltijd/{maaltijdId}
- * @group Maaltijd - Endpoints voor CRUD functionaliteit op een maaltijd.
- * @returns {MaaltijdResponse.model} 200 - De gevraagde maaltijdinformatie
- * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
- */
-routes.get('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.getMaaltijdById)
-
-/**
  * Vervang de maaltijd met het gegeven maaltijdId door de nieuwe maaltijd in de request body.
  * Als er geen studentenhuis of maaltijd met de gevraagde Id bestaat wordt een juiste foutmelding geretourneerd.
  * Alleen de gebruiker die de maaltijd heeft aangemaakt kan deze wijzigen.
@@ -240,21 +189,6 @@ routes.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.
  * @returns {ApiError.model}  409 - Conflict (Gebruiker is al aangemeld)
  */
 routes.post('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', DeelnemerController.create)
-
-/**
- * Geef de lijst met deelnemers voor de maaltijd met gegeven maaltijdID in het studentenhuis met huisId. 
- * Als er geen studentenhuis of maaltijd met de gevraagde Id bestaat wordt een juiste foutmelding geretourneerd.
- * Deelnemers zijn geregistreerde gebruikers die zich hebben aangemeld voor deze maaltijd.
- * Iedere gebruiker kan alle deelnemers van alle maaltijden in alle studentenhuizen opvragen.
- * Authenticatie door middel van JWT is vereist.
- * 
- * @route GET /api/studentenhuis/{huisId}/maaltijd/{maaltijdId}/deelnemers
- * @group Deelnemers - Endpoints voor CRD functionaliteit op een deelnemer aan een maaltijd.
- * @returns {DeelnemerResponse.model} 200 - Een array met deelnemers aan de gegeven maaltijd in het gegeven studentenhuis.
- * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
- * @returns {ApiError.model}  404 - Niet gevonden (huisId of maaltijdId bestaat niet)
- */
-routes.get('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', DeelnemerController.getAll)
 
 /**
  * Verwijder een deelnemer.

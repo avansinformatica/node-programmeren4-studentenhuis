@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 const user_routes = require('./routes/user.routes')
 const authenticationroutes = require('./routes/authentication.routes')
 const studentenhuisroutes = require('./routes/studentenhuis.routes')
+const studentenhuis_open_routes = require('./routes/studentenhuis.open.routes')
 const AuthController = require('./controllers/authentication.controller')
 const ApiError = require('./model/ApiError')
 const settings = require('./config/config')
@@ -63,16 +64,12 @@ app.use(function (req, res, next) {
 	next();
 });
 
-// Preprocessing catch-all endpoint
-// The perfect place to check that the user performing the request 
-// has authorisation to do things on our server
-app.use('*', function (req, res, next) {
-	next()
-})
-
 // UNPROTECTED endpoints for authentication - no token required.
 // Provide login and registration 
 app.use('/api', authenticationroutes)
+
+// GET routes are UNPROTECTED
+app.use('/api', studentenhuis_open_routes)
 
 // JWT TOKEN VALIDATION for authentication
 app.all('*', AuthController.validateToken);
