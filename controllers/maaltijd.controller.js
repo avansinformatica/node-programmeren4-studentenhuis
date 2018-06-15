@@ -59,7 +59,7 @@ module.exports = {
                         const error = new ApiError(err, 412)
                         next(error);
                     } else {
-                        res.status(200).json(rows).end()
+                        res.status(200).json({result: rows}).end()
                     }
                 })
         } catch (ex) {
@@ -90,7 +90,7 @@ module.exports = {
                         const error = new ApiError('Non-exiting maaltijd or not allowed to access it.', 404)
                         next(error);
                     } else {
-                        res.status(200).json(rows[0]).end()
+                        res.status(200).json({result: rows[0]}).end()
                     }
                 })
         } catch (ex) {

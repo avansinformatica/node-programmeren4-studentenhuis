@@ -71,7 +71,7 @@ module.exports = {
                         const error = new ApiError('Non-exiting studentenhuis or maaltijd.', 404)
                         next(error);
                     } else {
-                        res.status(200).json(rows).end()
+                        res.status(200).json({result: rows}).end()
                     }
                 })
         } catch (ex) {
