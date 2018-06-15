@@ -1,27 +1,56 @@
 /**
  * Testcases aimed at testing the authentication process. 
  */
-var chai = require('chai')
-var chaiHttp = require('chai-http')
-var server = require('../server')
+const chai = require('chai')
+const chaiHttp = require('chai-http')
+const server = require('../server')
+const db = require('../config/db')
+const logger = require('../config/config').logger
 
 chai.should()
 chai.use(chaiHttp)
 
 const endpoint = '/api/register'
+const email = 'tst@test.com'
 
 // After successful registration we have a valid token. We export this token
 // for usage in other testcases that require login.
 let validToken
 
 describe('Registration', () => {
+
+    before(function () {
+        // Before registration, delete our existing dummy data from the database.
+        // Ideally we want a separate database for running tests.
+        try {
+            // const query = 'DELETE FROM `user` WHERE `Email` = ?'
+            let query = 'DELETE FROM `studentenhuis` WHERE `UserID` = (SELECT `ID` FROM `user` WHERE `Email` = ?)'
+            let values = [email]
+            db.query(query, values, (err, rows, fields) => {
+                if (err) {
+                    logger.error(err.toString())
+                }
+            })
+
+            query = 'DELETE FROM `user` WHERE `Email` = ?'
+            values = [email]
+            db.query(query, values, (err, rows, fields) => {
+                if (err) {
+                    logger.error(err.toString())
+                }
+            })
+        } catch (ex) {
+            logger.error(ex.toString())
+        }
+    })
+
     it('should return a token when providing valid information', (done) => {
         chai.request(server)
             .post(endpoint)
             .send({
                 'firstname': ' FirstName ',
                 'lastname': ' LastName ',
-                'email': 'tst@test.com',
+                'email': email,
                 'password': 'secret'
             })
             .end((err, res) => {
@@ -56,7 +85,7 @@ describe('Registration', () => {
             .post(endpoint)
             .send({
                 'lastname': ' LastName ',
-                'email': 'tst@test.com',
+                'email': email,
                 'password': 'secret'
             })
             .end((err, res) => {
@@ -99,7 +128,7 @@ describe('Login', () => {
         chai.request(server)
             .post('/api/login')
             .send({
-                'email': 'tst@test.com',
+                'email': email,
                 'password': 'secret'
             })
             .end((err, res) => {
@@ -107,7 +136,7 @@ describe('Login', () => {
                 res.body.should.be.a('object')
                 const response = res.body
                 response.should.have.property('token').which.is.a('string')
-                response.should.have.property('email').which.is.a('string')
+                response.should.have.property('email').which.is.a('string').equals(email)
                 done()
             })
     })

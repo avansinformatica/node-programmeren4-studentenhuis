@@ -3,7 +3,8 @@
 //
 const ApiError = require('../model/ApiError')
 const assert = require('assert')
-const db = require('../config/db.improved')
+const db = require('../config/db')
+const logger = require('../config/config').logger
 
 module.exports = {
 
@@ -44,7 +45,7 @@ module.exports = {
                     }
                 })
         } catch (ex) {
-            console.log(ex)
+            logger.error(ex)
             const error = new ApiError(ex, 412)
             next(error);
         }
@@ -74,7 +75,7 @@ module.exports = {
                     }
                 })
         } catch (ex) {
-            console.log(ex)
+            logger.error(ex)
             const error = new ApiError(ex, 412)
             next(error);
         }

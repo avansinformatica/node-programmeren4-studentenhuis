@@ -17,6 +17,9 @@ const DeelnemerController = require('../controllers/deelnemer.controller')
  * @typedef Studentenhuis
  * @property {string} naam.required - De naam van het studentenhuis
  * @property {string} adres.required - Straatnaam en huisnummer van het studentenhuis
+ * @property {string} lat.required - Latitude Geo coördinaten van het studentenhuis
+ * @property {string} long.required - Longitude Geo coördinaten van het studentenhuis
+ * @property {string} image - Optionele afbeelding van het studentenhuis
  */
 
 /**
@@ -26,6 +29,9 @@ const DeelnemerController = require('../controllers/deelnemer.controller')
  * @property {string} adres.required - Straatnaam en huisnummer van het studentenhuis
  * @property {string} contact.required - De voor en achternaam van de gebruiker die het studentenhuis heeft aangemaakt.
  * @property {string} email.required - Email van de gebruiker die het studentenhuis heeft aangemaakt.
+ * @property {string} lat.required - Latitude Geo coördinaten van het studentenhuis
+ * @property {string} long.required - Longitude Geo coördinaten van het studentenhuis
+ * @property {string} image - Afbeelding van het studentenhuis
  */
 
 /**
@@ -35,6 +41,7 @@ const DeelnemerController = require('../controllers/deelnemer.controller')
  * @property {string} ingredienten.required - Ingredienten van de maaltijd, komma gescheiden.
  * @property {string} allergie.required - Allergie informatie van de maaltijd.
  * @property {number} prijs.required - Prijs van de maaltijd (alleen gehele getallen).
+ * @property {string} image - Afbeelding van de maaltijd
  */
 
 /**
@@ -45,10 +52,7 @@ const DeelnemerController = require('../controllers/deelnemer.controller')
  * @property {string} ingredienten.required - Ingredienten van de maaltijd, komma gescheiden.
  * @property {string} allergie.required - Allergie informatie van de maaltijd.
  * @property {number} prijs.required - Prijs van de maaltijd (alleen gehele getallen).
- */
-
-/**
- * @typedef Deelnemer
+ * @property {string} image - Afbeelding van de maaltijd
  */
 
 /**
@@ -56,6 +60,7 @@ const DeelnemerController = require('../controllers/deelnemer.controller')
  * @property {string} voornaam.required
  * @property {string} achternaam.required
  * @property {string} email.required
+ * @property {string} image - Afbeelding van de deelnemer
  */
 
 /**
@@ -87,9 +92,10 @@ routes.get('/studentenhuis', StudentenhuisController.getAll)
 
 /**
  * Retourneer het studentenhuis met de gegeven huisId. Iedere gebruiker kan alle studentenhuizen opvragen.
+ * Als er geen studentenhuis met de gevraagde huisId bestaat wordt een juiste foutmelding geretourneerd.  
  * Authenticatie door middel van JWT is vereist.
  * 
- * @route GET /api/studentenhuis{huisId}
+ * @route GET /api/studentenhuis/{huisId}
  * @group Studentenhuis - Endpoints voor CRUD functionaliteit op een studentenhuis.
  * @returns {StudentenhuisResponse.model} 200 - Het studentenhuis met de gegeven huisId.
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
@@ -102,6 +108,7 @@ routes.get('/studentenhuis/:huisId', StudentenhuisController.getById)
  * dat in de body is meegestuurd. Alleen de gebruiker die het studentenhuis heeft aangemaakt
  * mag de informatie van dat studenenhuis wijzigen.
  * Deze ID haal je uit het JWT token.
+ * Als er geen studentenhuis met de gevraagde huisId bestaat wordt een juiste foutmelding geretourneerd.
  * De correctheid van de informatie die wordt gegeven moet door de server gevalideerd worden. 
  * Bij ontbrekende of foutieve invoer wordt een juiste foutmelding geretourneerd.
  * Authenticatie door middel van JWT is vereist.
@@ -119,6 +126,7 @@ routes.put('/studentenhuis/:huisId', StudentenhuisController.update)
 
 /**
  * Verwijder het studentenhuis met de gegeven huisId.
+ * Als er geen studentenhuis met de gevraagde huisId bestaat wordt een juiste foutmelding geretourneerd.
  * Een gebruiker kan alleen een studentenhuis verwijderen als hij dat zelf heeft aangemaakt.
  * Deze ID haal je uit het JWT token.
  * Authenticatie door middel van JWT is vereist.
@@ -137,6 +145,7 @@ routes.delete('/studentenhuis/:huisId', StudentenhuisController.delete)
  * Maak een nieuwe maaltijd voor een studentenhuis. De ID van de gebruiker die de maaltijd
  * aanmaakt wordt opgeslagen bij de maaltijd. 
  * Deze ID haal je uit het JWT token.
+ * Als er geen studentenhuis met de gevraagde huisId bestaat wordt een juiste foutmelding geretourneerd.
  * De correctheid van de informatie die wordt gegeven moet door de server gevalideerd worden. 
  * Bij ontbrekende of foutieve invoer wordt een juiste foutmelding geretourneerd.
  * Authenticatie door middel van JWT is vereist.
@@ -153,6 +162,7 @@ routes.post('/studentenhuis/:huisId/maaltijd', MaaltijdController.create)
 
 /**
  * Retourneer alle maaltijden voor het studentenhuis met de gegeven huisId. 
+ * Als er geen studentenhuis met de gevraagde huisId bestaat wordt een juiste foutmelding geretourneerd.
  * Iedere gebruiker kan alle maaltijden van alle studentenhuizen opvragen. 
  * Authenticatie door middel van JWT is vereist.
  * 
@@ -166,6 +176,7 @@ routes.get('/studentenhuis/:huisId/maaltijd', MaaltijdController.getAll)
 
 /**
  * Retourneer de maaltijd met het gegeven maaltijdId.
+ * Als er geen studentenhuis of maaltijd met de gevraagde Id bestaat wordt een juiste foutmelding geretourneerd.
  * Iedere gebruiker kan alle maaltijden van alle studentenhuizen opvragen.
  * Authenticatie door middel van JWT is vereist.
  * 
@@ -178,6 +189,7 @@ routes.get('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.get
 
 /**
  * Vervang de maaltijd met het gegeven maaltijdId door de nieuwe maaltijd in de request body.
+ * Als er geen studentenhuis of maaltijd met de gevraagde Id bestaat wordt een juiste foutmelding geretourneerd.
  * Alleen de gebruiker die de maaltijd heeft aangemaakt kan deze wijzigen.
  * De ID van de gebruiker haal je uit het JWT token.
  * De correctheid van de informatie die wordt gegeven moet door de server gevalideerd worden.
@@ -197,6 +209,7 @@ routes.put('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.upd
 
 /**
  * Verwijder de maaltijd met het gegeven maaltijdId.
+ * Als er geen studentenhuis of maaltijd met de gevraagde Id bestaat wordt een juiste foutmelding geretourneerd.
  * Alleen de gebruiker die de maaltijd heeft aangemaakt kan deze wijzigen.
  * De ID van de gebruiker haal je uit het JWT token.
  * Authenticatie door middel van JWT is vereist. 
@@ -212,23 +225,25 @@ routes.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId', MaaltijdController.
 
 /**
  * Meld je aan voor een maaltijd in een studentenhuis. 
+ * Als er geen studentenhuis of maaltijd met de gevraagde Id bestaat wordt een juiste foutmelding geretourneerd.
  * De user ID uit het token is dat van de gebruiker die zich aanmeldt. 
  * Die gebruiker wordt dus aan de lijst met aanmelders toegevoegd. 
  * Een gebruiker kan zich alleen aanmelden als hij niet al aan de maaltijd deelneemt; 
  * anders volgt een foutmelding.
  * Authenticatie door middel van JWT is vereist. 
  * 
- * @route POST /api/studentenhuis/{huisId}/maaltijd/{maaltijdId}
+ * @route POST /api/studentenhuis/{huisId}/maaltijd/{maaltijdId}/deelnemers
  * @group Deelnemers - Endpoints voor CRD functionaliteit op een deelnemer aan een maaltijd.
  * @returns {DeelnemerResponse.model} 200 - Informatie over de toegevoegde deelnemer
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  * @returns {ApiError.model}  404 - Niet gevonden (huisId of maaltijdId bestaat niet)
  * @returns {ApiError.model}  409 - Conflict (Gebruiker is al aangemeld)
  */
-routes.post('/studentenhuis/:huisId/maaltijd/:maaltijdId', DeelnemerController.create)
+routes.post('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', DeelnemerController.create)
 
 /**
  * Geef de lijst met deelnemers voor de maaltijd met gegeven maaltijdID in het studentenhuis met huisId. 
+ * Als er geen studentenhuis of maaltijd met de gevraagde Id bestaat wordt een juiste foutmelding geretourneerd.
  * Deelnemers zijn geregistreerde gebruikers die zich hebben aangemeld voor deze maaltijd.
  * Iedere gebruiker kan alle deelnemers van alle maaltijden in alle studentenhuizen opvragen.
  * Authenticatie door middel van JWT is vereist.
@@ -243,6 +258,7 @@ routes.get('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', DeelnemerCo
 
 /**
  * Verwijder een deelnemer.
+ * Als er geen studentenhuis of maaltijd met de gevraagde Id bestaat wordt een juiste foutmelding geretourneerd.
  * De deelnemer die wordt verwijderd is de gebruiker met het ID uit het token.
  * Een gebruiker kan alleen zijn eigen aanmelding verwijderen. 
  * Authenticatie door middel van JWT is vereist. 
