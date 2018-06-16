@@ -85,7 +85,7 @@ module.exports = {
             return
         }
 
-        db.query('SELECT `ID`, `Email`, `Password` FROM user WHERE Email = ?', [req.body.email], (err, rows, fields) => {
+        db.query('SELECT `ID`, `Email`, `Password`, `Image` FROM `user` WHERE `Email` = ?', [req.body.email], (err, rows, fields) => {
             if (err) {
                 const error = new ApiError(err, 500)
                 next(error);
@@ -108,7 +108,8 @@ module.exports = {
                             const userinfo = {
                                 token: auth.encodeToken(payload),
                                 email: rows[0].Email,
-                                userid: rows[0].ID
+                                userid: rows[0].ID,
+                                userimage: rows[0].Image
                             }
                             res.status(200).json(userinfo).end()
                         } else {
