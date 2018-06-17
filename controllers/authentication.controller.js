@@ -85,7 +85,7 @@ module.exports = {
             return
         }
 
-        db.query('SELECT `ID`, `Email`, `Password`, TO_BASE64(`Image`) FROM `user` WHERE `Email` = ?', [req.body.email], (err, rows, fields) => {
+        db.query('SELECT `ID`, `Voornaam`, `Achternaam`, `Email`, `Password`, `Image` FROM `user` WHERE `Email` = ?', [req.body.email], (err, rows, fields) => {
             if (err) {
                 const error = new ApiError(err, 500)
                 next(error);
@@ -107,8 +107,8 @@ module.exports = {
                             // Userinfo returned to the caller.
                             const userinfo = {
                                 token: auth.encodeToken(payload),
+                                username: rows[0].Voornaam + ' ' + rows[0].Achternaam,
                                 email: rows[0].Email,
-                                userid: rows[0].ID,
                                 userimage: rows[0].Image
                             }
                             res.status(200).json(userinfo).end()
@@ -125,7 +125,7 @@ module.exports = {
     },
 
     /**
-     * Register a new user. The user should provide a firstname, lastname, emailaddress and 
+     * Register a new user. The user should provide a Voornaam, Achternaam, emailaddress and 
      * password. The emailaddress should be unique when it exists, an error must be thrown.
      * The password will be encrypted by the User class and must never be stored as plain text! 
      * 
@@ -151,13 +151,13 @@ module.exports = {
             return
         }
 
-        db.query('SELECT `Email` FROM user WHERE Email = ?', [req.body.email], (err, rows, fields) => {
+        db.query('SELECT `Email` FROM `user` WHERE `Email` = ?', [req.body.email], (err, rows, fields) => {
             if (err) {
                 const error = new ApiError(err, 412)
                 next(error);
             } else {
-                // logger.info('found results')
-                // logger.info(rows)
+                logger.info('found results')
+                logger.info(rows)
 
                 if (rows.length > 0) {
                     const error = new ApiError('Email already exists', 412)
@@ -175,7 +175,7 @@ module.exports = {
                         )
                         logger.info(user)
 
-                        db.query('INSERT INTO `user` (Voornaam, Achternaam, Email, Password, Image) VALUES (?, ?, ?, ?, ?)', 
+                        db.query('INSERT INTO `user` (`Voornaam`, `Achternaam`, `Email`, `Password`, `Image`) VALUES (?, ?, ?, ?, ?)', 
                             [user.name.firstname, user.name.lastname, user.email, user.password, req.body.image],
                             (err, rows, fields) => {
                                 if (err) {
@@ -190,8 +190,9 @@ module.exports = {
                                     // Userinfo returned to the caller.
                                     const userinfo = {
                                         token: auth.encodeToken(payload),
+                                        username: user.name.firstname + ' ' + user.name.lastname,
                                         email: user.email,
-                                        userid: rows.insertId
+                                        userimage: req.body.image
                                     }
                                     res.status(200).json(userinfo).end()
                                 }
