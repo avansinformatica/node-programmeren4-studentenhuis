@@ -85,7 +85,7 @@ module.exports = {
             return
         }
 
-        db.query('SELECT `ID`, `Email`, `Password`, `Image` FROM `user` WHERE `Email` = ?', [req.body.email], (err, rows, fields) => {
+        db.query('SELECT `ID`, `Email`, `Password`, TO_BASE64(`Image`) FROM `user` WHERE `Email` = ?', [req.body.email], (err, rows, fields) => {
             if (err) {
                 const error = new ApiError(err, 500)
                 next(error);
