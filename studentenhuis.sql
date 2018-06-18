@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 	`Achternaam` VARCHAR(32) NOT NULL,
 	`Email` VARCHAR(32) NOT NULL,
 	`Password` CHAR(64) BINARY NOT NULL,
-	`Image` LONGBLOB,
+	`ImageUrl` VARCHAR(256),
 	PRIMARY KEY (`ID`)
 ) 
 ENGINE = InnoDB;
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `studentenhuis` (
 	`UserID` INT UNSIGNED NOT NULL,
 	`Lat` FLOAT( 10, 6 ) NOT NULL ,
 	`Long` FLOAT( 10, 6 ) NOT NULL,
-	`Image` LONGBLOB,
+	`ImageUrl` VARCHAR(256),
 	PRIMARY KEY (`ID`)
 ) 
 ENGINE = InnoDB;
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `maaltijd` (
 	`Prijs` INT UNSIGNED  NOT NULL,
 	`UserID` INT UNSIGNED NOT NULL,
 	`StudentenhuisID` INT UNSIGNED NOT NULL,
-	`Image` LONGBLOB,
+	`ImageUrl` VARCHAR(256),
 	PRIMARY KEY (`ID`)
 ) 
 ENGINE = InnoDB;
@@ -143,7 +143,7 @@ SELECT
 	`studentenhuis`.`Adres`,
 	`studentenhuis`.`Lat`,
 	`studentenhuis`.`Long`,
-	`studentenhuis`.`Image`,
+	`studentenhuis`.`ImageUrl`,
 	CONCAT(`user`.`Voornaam`, ' ', `user`.`Achternaam`) AS `Contact`,
 	`user`.`Email`
 FROM `studentenhuis`
@@ -162,7 +162,7 @@ SELECT
 	`user`.`Voornaam`,
 	`user`.`Achternaam`,
 	`user`.`Email`,
-	`user`.`Image`
+	`user`.`ImageUrl`
 FROM `deelnemers`
 LEFT JOIN `user` ON `deelnemers`.`UserID` = `user`.`ID`;
 

@@ -85,7 +85,7 @@ module.exports = {
             return
         }
 
-        db.query('SELECT `ID`, `Voornaam`, `Achternaam`, `Email`, `Password`, `Image` FROM `user` WHERE `Email` = ?', [req.body.email], (err, rows, fields) => {
+        db.query('SELECT `ID`, `Voornaam`, `Achternaam`, `Email`, `Password`, `ImageUrl` FROM `user` WHERE `Email` = ?', [req.body.email], (err, rows, fields) => {
             if (err) {
                 const error = new ApiError(err, 500)
                 next(error);
@@ -109,7 +109,7 @@ module.exports = {
                                 token: auth.encodeToken(payload),
                                 username: rows[0].Voornaam + ' ' + rows[0].Achternaam,
                                 email: rows[0].Email,
-                                userimage: rows[0].Image
+                                imageUrl: rows[0].ImageUrl
                             }
                             res.status(200).json(userinfo).end()
                         } else {
@@ -136,6 +136,7 @@ module.exports = {
     register(req, res, next) {
         // logger.info('register')
         // logger.info(req.body)
+
         try {
             assert(typeof (req.body.firstname) === 'string', 'firstname must be a string.')
             assert(typeof (req.body.lastname) === 'string', 'lastname must be a string.')
@@ -151,6 +152,9 @@ module.exports = {
             return
         }
 
+        /**
+         * Query the database to see if the email of the user to be registered already exists.
+         */
         db.query('SELECT `Email` FROM `user` WHERE `Email` = ?', [req.body.email], (err, rows, fields) => {
             if (err) {
                 const error = new ApiError(err, 412)
@@ -175,8 +179,8 @@ module.exports = {
                         )
                         logger.info(user)
 
-                        db.query('INSERT INTO `user` (`Voornaam`, `Achternaam`, `Email`, `Password`, `Image`) VALUES (?, ?, ?, ?, ?)', 
-                            [user.name.firstname, user.name.lastname, user.email, user.password, req.body.image],
+                        db.query('INSERT INTO `user` (`Voornaam`, `Achternaam`, `Email`, `Password`, `ImageUrl`) VALUES (?, ?, ?, ?, ?)', 
+                            [user.name.firstname, user.name.lastname, user.email, user.password, req.body.image || ''],
                             (err, rows, fields) => {
                                 if (err) {
                                     const error = new ApiError(err, 412)
@@ -192,7 +196,7 @@ module.exports = {
                                         token: auth.encodeToken(payload),
                                         username: user.name.firstname + ' ' + user.name.lastname,
                                         email: user.email,
-                                        userimage: req.body.image
+                                        imageUrl: req.body.image
                                     }
                                     res.status(200).json(userinfo).end()
                                 }

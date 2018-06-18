@@ -50,7 +50,15 @@ let options = {
 expressSwagger(options)
 
 // bodyParser parses the body from a request
-app.use(bodyParser.json())
+// hierin zit de inhoud van een POST request.
+app.use(bodyParser.urlencoded({
+	'extended': 'true'
+})); 
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.json()); // parse application/json
+app.use(bodyParser.json({
+	type: 'application/vnd.api+json'
+})); // parse application/vnd.api+json as json
 
 // Instal Morgan as logger
 app.use(morgan('dev'))

@@ -3,6 +3,7 @@
 //
 const routes = require('express').Router();
 const AuthController = require('../controllers/authentication.controller')
+const UploadController = require('../controllers/upload.controller')
 
 /**
  * @typedef UserLoginJSON
@@ -60,6 +61,6 @@ routes.post('/login', AuthController.login)
  * @returns {ApiError.model} 401 - Niet geautoriseerd (geen valid token)
  * @returns {ApiError.model} 412 - Een of meer properties in de request body ontbreken of zijn foutief 
  */
-routes.post('/register', AuthController.register)
+routes.post('/register', UploadController.handleUploadForm, AuthController.register)
 
 module.exports = routes
