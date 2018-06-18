@@ -5,6 +5,7 @@ let routes = require('express').Router()
 const StudentenhuisController = require('../controllers/studentenhuis.controller')
 const MaaltijdController = require('../controllers/maaltijd.controller')
 const DeelnemerController = require('../controllers/deelnemer.controller')
+const UploadController = require('../controllers/upload.controller')
 
 /**
  * @typedef ApiError
@@ -77,7 +78,7 @@ const DeelnemerController = require('../controllers/deelnemer.controller')
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  * @returns {ApiError.model}  412 - Een of meer properties in de request body ontbreken of zijn foutief 
  */
-routes.post('/studentenhuis', StudentenhuisController.create)
+routes.post('/studentenhuis', UploadController.handleUploadForm, StudentenhuisController.create)
 
 /**
  * Vervang het studentenhuis met de gegeven huisId door de informatie van het studentenhuis 
@@ -134,7 +135,7 @@ routes.delete('/studentenhuis/:huisId', StudentenhuisController.delete)
  * @returns {ApiError.model}  404 - Niet gevonden (huisId bestaat niet)
  * @returns {ApiError.model}  412 - Een of meer properties in de request body ontbreken of zijn foutief 
  */
-routes.post('/studentenhuis/:huisId/maaltijd', MaaltijdController.create)
+routes.post('/studentenhuis/:huisId/maaltijd', UploadController.handleUploadForm, MaaltijdController.create)
 
 /**
  * Vervang de maaltijd met het gegeven maaltijdId door de nieuwe maaltijd in de request body.

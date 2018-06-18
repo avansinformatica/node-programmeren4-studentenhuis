@@ -160,8 +160,8 @@ module.exports = {
                 const error = new ApiError(err, 412)
                 next(error);
             } else {
-                logger.info('found results')
-                logger.info(rows)
+                // logger.info('found results')
+                // logger.info(rows)
 
                 if (rows.length > 0) {
                     const error = new ApiError('Email already exists', 412)
@@ -175,12 +175,13 @@ module.exports = {
                             req.body.firstname,
                             req.body.lastname,
                             req.body.email,
-                            req.body.password
+                            req.body.password,
+                            req.body.imageUrl
                         )
                         logger.info(user)
 
                         db.query('INSERT INTO `user` (`Voornaam`, `Achternaam`, `Email`, `Password`, `ImageUrl`) VALUES (?, ?, ?, ?, ?)', 
-                            [user.name.firstname, user.name.lastname, user.email, user.password, req.body.image || ''],
+                            [user.name.firstname, user.name.lastname, user.email, user.password, user.imageUrl || ''],
                             (err, rows, fields) => {
                                 if (err) {
                                     const error = new ApiError(err, 412)
@@ -196,7 +197,7 @@ module.exports = {
                                         token: auth.encodeToken(payload),
                                         username: user.name.firstname + ' ' + user.name.lastname,
                                         email: user.email,
-                                        imageUrl: req.body.image
+                                        imageUrl: user.imageUrl
                                     }
                                     res.status(200).json(userinfo).end()
                                 }
