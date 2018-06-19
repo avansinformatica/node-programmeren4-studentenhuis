@@ -10,14 +10,21 @@ const formidable = require('formidable')
 
 const staticfolder = './static'
 const imagefolder = '/images'
-const uploaddir = path.join(__dirname, '/..', staticfolder, imagefolder)
+const uploaddir = path.join(__dirname, staticfolder, imagefolder)
 
 // Make sure the required folders exist.
-fs.mkdir(staticfolder, () => {
-    // logger.info('Created folder ' + staticfolder)
-    fs.mkdir(uploaddir, () => { 
-        logger.info('Created ' + uploaddir + ' folder for file image uploads')
-    })
+fs.mkdir(staticfolder, (err) => {
+    if(err) {
+        logger.error('Error creating folder ' + staticfolder)
+    } else {
+        fs.mkdir(uploaddir, (err) => {
+            if(err) {
+                logger.error('Error creating folder ' + uploaddir)
+            } else {
+                logger.info('Created ' + uploaddir + ' folder for file image uploads')
+            }
+        })
+    }
 })
 
 module.exports = {
