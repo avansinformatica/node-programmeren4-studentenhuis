@@ -8,13 +8,15 @@ const path = require('path')
 const fs = require('fs')
 const formidable = require('formidable')
 
-const uploaddir = path.join(__dirname, '/..', '/static/uploads')
+const staticfolder = './static'
+const imagefolder = '/images'
+const uploaddir = path.join(__dirname, '/..', staticfolder, imagefolder)
 
 // Make sure the required folders exist.
-fs.mkdir('./static', () => {
-    // logger.info('Created ./static folder')
+fs.mkdir(staticfolder, () => {
+    // logger.info('Created folder ' + staticfolder)
     fs.mkdir(uploaddir, () => { 
-        logger.info('Created ' + uploaddir + ' folder for file uploads')
+        logger.info('Created ' + uploaddir + ' folder for file image uploads')
     })
 })
 
@@ -70,7 +72,8 @@ module.exports = {
                 // can save it in the database for later lookup.
                 //
                 logger.debug('Saved file ' + file.path)
-                req.body.imageUrl = file.path
+                req.body.filepath = file.path
+                req.body.imageUrl = path.join(imagefolder, '/', file.name)
                 next()
             })
     }

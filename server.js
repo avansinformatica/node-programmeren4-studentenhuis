@@ -72,6 +72,9 @@ app.use(function (req, res, next) {
 	next();
 });
 
+// Serve files from the ./static folder 
+app.use(express.static('./static'))
+
 // UNPROTECTED endpoints for authentication - no token required.
 // Provide login and registration 
 app.use('/api', authenticationroutes)
@@ -80,7 +83,7 @@ app.use('/api', authenticationroutes)
 app.use('/api', studentenhuis_open_routes)
 
 // JWT TOKEN VALIDATION for authentication
-app.all('*', AuthController.validateToken);
+app.all('/api', AuthController.validateToken);
 
 // PROTECTED endpoints
 app.use('/api', user_routes)
