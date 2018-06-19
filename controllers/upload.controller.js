@@ -8,9 +8,9 @@ const path = require('path')
 const fs = require('fs')
 const formidable = require('formidable')
 
-const staticfolder = './static'
-const imagefolder = '/images'
-const uploaddir = path.join(__dirname, staticfolder, imagefolder)
+const staticfolder = 'static'
+const imagefolder = 'images'
+const uploaddir = path.join(__dirname, path.sep, staticfolder, path.sep, imagefolder)
 
 // Make sure the required folders exist.
 fs.mkdir(staticfolder, (err) => {
