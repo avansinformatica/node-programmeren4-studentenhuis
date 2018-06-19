@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 	`Email` VARCHAR(32) NOT NULL,
 	`Password` CHAR(64) BINARY NOT NULL,
 	`ImageUrl` VARCHAR(256),
+	`ImagePath` VARCHAR(256),
 	PRIMARY KEY (`ID`)
 ) 
 ENGINE = InnoDB;
@@ -42,6 +43,7 @@ CREATE TABLE IF NOT EXISTS `studentenhuis` (
 	`Lat` FLOAT( 10, 6 ) NOT NULL ,
 	`Long` FLOAT( 10, 6 ) NOT NULL,
 	`ImageUrl` VARCHAR(256),
+	`ImagePath` VARCHAR(256),
 	PRIMARY KEY (`ID`)
 ) 
 ENGINE = InnoDB;
@@ -69,6 +71,7 @@ CREATE TABLE IF NOT EXISTS `maaltijd` (
 	`UserID` INT UNSIGNED NOT NULL,
 	`StudentenhuisID` INT UNSIGNED NOT NULL,
 	`ImageUrl` VARCHAR(256),
+	`ImagePath` VARCHAR(256),
 	PRIMARY KEY (`ID`)
 ) 
 ENGINE = InnoDB;

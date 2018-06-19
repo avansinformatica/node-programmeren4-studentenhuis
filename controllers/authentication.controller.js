@@ -7,6 +7,7 @@ const User = require('../model/User')
 const auth = require('../util/auth/authentication')
 const bcrypt = require('bcryptjs')
 const db = require('../config/db')
+const path = require('path')
 const validateEmail = require('../util/emailvalidator')
 const logger = require('../config/config').logger
 
@@ -180,8 +181,8 @@ module.exports = {
                         )
                         logger.info(user)
 
-                        db.query('INSERT INTO `user` (`Voornaam`, `Achternaam`, `Email`, `Password`, `ImageUrl`) VALUES (?, ?, ?, ?, ?)', 
-                            [user.name.firstname, user.name.lastname, user.email, user.password, user.imageUrl || ''],
+                        db.query('INSERT INTO `user` (`Voornaam`, `Achternaam`, `Email`, `Password`, `ImageUrl`, `ImagePath`) VALUES (?, ?, ?, ?, ?, ?)', 
+                            [user.name.firstname, user.name.lastname, user.email, user.password, user.imageUrl || '', req.body.filepath],
                             (err, rows, fields) => {
                                 if (err) {
                                     const error = new ApiError(err, 412)
@@ -197,7 +198,7 @@ module.exports = {
                                         token: auth.encodeToken(payload),
                                         username: user.name.firstname + ' ' + user.name.lastname,
                                         email: user.email,
-                                        imageUrl: user.imageUrl
+                                        imageUrl: path.normalize(user.imageUrl)
                                     }
                                     res.status(200).json(userinfo).end()
                                 }
