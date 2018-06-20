@@ -10,24 +10,23 @@ const formidable = require('formidable')
 
 const staticfolder = 'static'
 const imagefolder = 'images'
-const uploaddir = path.join(__dirname, path.sep, staticfolder, path.sep, imagefolder)
 
+let uploaddir = path.join(__dirname, path.sep, '..', path.sep, staticfolder)
 //
 // Make sure the required image upload folder exists.
 //
-fs.mkdir(path.join(__dirname, path.sep, staticfolder), (err) => {
+fs.mkdir(uploaddir, (err) => {
     if(err) {
-        logger.error('Error creating folder ' + path.join(__dirname, path.sep, staticfolder) + ': ' + err.toString())
-    } else {
-        logger.info('Creating folder ' + uploaddir)
-        fs.mkdir(uploaddir, (err) => {
-            if(err) {
-                logger.error('Error creating folder ' + uploaddir + ': ' + err.toString())
-            } else {
-                logger.info('Created ' + uploaddir + ' folder for file image uploads')
-            }
-        })
-    }
+        logger.warn('Could not create folder ' + uploaddir + ': ' + err.toString())
+    } 
+    uploaddir = path.join(uploaddir, path.sep, imagefolder)
+    fs.mkdir(uploaddir, (err) => {
+        if(err) {
+            logger.warn('Could not create folder ' + uploaddir + ': ' + err.toString())
+        } else {
+            logger.info('Created ' + uploaddir + ' folder for file image uploads')
+        }
+    })
 })
 
 module.exports = {
@@ -50,8 +49,8 @@ module.exports = {
         //
         var form = new formidable.IncomingForm()
         // Configure formidable.
-        form.maxFieldsSize = 100 * 1024 * 1024 // 1 Mb excl. uploaded file
-        form.maxFileSize = 12 * 1024 * 1024 // 12 Mb
+        form.maxFieldsSize = 100 * 1024 * 1024  // Size INCL uploaded file
+        form.maxFileSize = 12 * 1024 * 1024     // Upload file size in Mb
         form.uploadDir = uploaddir
         form.keepExtensions = true
 
@@ -82,9 +81,16 @@ module.exports = {
                 // We add the file path to the request, so that the next handler
                 // can save it in the database for later lookup.
                 //
-                logger.debug('Saved file ' + file.path)
+                logger.debug('Saving file ' + file.path)
                 req.body.filepath = file.path
                 req.body.imageUrl = path.join(imagefolder, '/', file.name)
+            })
+            .on('aborted', () => {
+                logger.warn('File upload was aborted - no file?')
+                next()
+            })
+            .on('end', () => {
+                logger.debug('File upload finished successfully.')
                 next()
             })
     }
