@@ -12,13 +12,14 @@ const staticfolder = 'static'
 const imagefolder = 'images'
 const uploaddir = path.join(__dirname, path.sep, staticfolder, path.sep, imagefolder)
 
-logger.info('Creating folder ' + uploaddir)
-
-// Make sure the required folders exist.
+//
+// Make sure the required image upload folder exists.
+//
 fs.mkdir(path.join(__dirname, path.sep, staticfolder), (err) => {
     if(err) {
         logger.error('Error creating folder ' + path.join(__dirname, path.sep, staticfolder) + ': ' + err.toString())
     } else {
+        logger.info('Creating folder ' + uploaddir)
         fs.mkdir(uploaddir, (err) => {
             if(err) {
                 logger.error('Error creating folder ' + uploaddir + ': ' + err.toString())
@@ -61,7 +62,7 @@ module.exports = {
                 next(new ApiError(error.toString(), 500))
             })
             .on('field', (name, value) => {
-                // logger.debug('received ' + name + ' = ' + value)
+                logger.debug('Field ' + name + ' = ' + value)
                 // 
                 // We copy the fields to the request body, because the next 
                 // endpoint handler expects them in the body.
@@ -73,6 +74,7 @@ module.exports = {
                 // Formidable uses a temp filename by default.
                 // Here we set the correct file path. 
                 file.path = path.join(uploaddir, file.name)
+                logger.debug('File.path = ' + file.path)
             })
             .on('file', (name, file) => {
                 //
