@@ -12,14 +12,16 @@ const staticfolder = 'static'
 const imagefolder = 'images'
 const uploaddir = path.join(__dirname, path.sep, staticfolder, path.sep, imagefolder)
 
+logger.info('Creating folder ' + uploaddir)
+
 // Make sure the required folders exist.
-fs.mkdir(staticfolder, (err) => {
+fs.mkdir(path.join(__dirname, path.sep, staticfolder), (err) => {
     if(err) {
-        logger.error('Error creating folder ' + staticfolder)
+        logger.error('Error creating folder ' + path.join(__dirname, path.sep, staticfolder) + ': ' + err.toString())
     } else {
         fs.mkdir(uploaddir, (err) => {
             if(err) {
-                logger.error('Error creating folder ' + uploaddir)
+                logger.error('Error creating folder ' + uploaddir + ': ' + err.toString())
             } else {
                 logger.info('Created ' + uploaddir + ' folder for file image uploads')
             }
