@@ -50,7 +50,7 @@ module.exports = {
         //
         var form = new formidable.IncomingForm()
         // Configure formidable.
-        form.maxFieldsSize = 1 * 1024 * 1024 // 1 Mb excl. uploaded file
+        form.maxFieldsSize = 100 * 1024 * 1024 // 1 Mb excl. uploaded file
         form.maxFileSize = 12 * 1024 * 1024 // 12 Mb
         form.uploadDir = uploaddir
         form.keepExtensions = true
