@@ -2,13 +2,19 @@ DROP DATABASE IF EXISTS `studentenhuis`;
 CREATE DATABASE `studentenhuis`;
 USE `studentenhuis`;
 
+--
+-- Uncomment de volgende SQL statements om een user in de database te maken
+-- Vanwege security mag je die user alleen in je lokale ontwikkeldatabase aanmaken!
+-- Op een remote 'productie'-server moet je zorgen voor een ANDER useraccount!
+-- Vanuit je (bv. nodejs) applicatie stel je de credentials daarvan in via environment variabelen.
+--
 -- studentenhuis_user aanmaken
-CREATE USER 'studentenhuis_user'@'%' IDENTIFIED BY 'secret';
-CREATE USER 'studentenhuis_user'@'localhost' IDENTIFIED BY 'secret';
+-- CREATE USER 'studentenhuis_user'@'%' IDENTIFIED BY 'secret';
+-- CREATE USER 'studentenhuis_user'@'localhost' IDENTIFIED BY 'secret';
 
 -- geef rechten aan deze user
-GRANT SELECT, INSERT, DELETE, UPDATE ON `studentenhuis`.* TO 'studentenhuis_user'@'%';
-GRANT SELECT, INSERT, DELETE, UPDATE ON `studentenhuis`.* TO 'studentenhuis_user'@'localhost';
+-- GRANT SELECT, INSERT, DELETE, UPDATE ON `studentenhuis`.* TO 'studentenhuis_user'@'%';
+-- GRANT SELECT, INSERT, DELETE, UPDATE ON `studentenhuis`.* TO 'studentenhuis_user'@'localhost';
 
 -- -----------------------------------------------------
 -- Table `users`
@@ -20,7 +26,8 @@ CREATE TABLE IF NOT EXISTS `user` (
 	`Achternaam` VARCHAR(32) NOT NULL,
 	`Email` VARCHAR(32) NOT NULL,
 	`Password` CHAR(64) BINARY NOT NULL,
-	`Image` LONGBLOB,
+	`ImageUrl` VARCHAR(256),
+	`ImagePath` VARCHAR(256),
 	PRIMARY KEY (`ID`)
 ) 
 ENGINE = InnoDB;
@@ -41,7 +48,8 @@ CREATE TABLE IF NOT EXISTS `studentenhuis` (
 	`UserID` INT UNSIGNED NOT NULL,
 	`Lat` FLOAT( 10, 6 ) NOT NULL ,
 	`Long` FLOAT( 10, 6 ) NOT NULL,
-	`Image` LONGBLOB,
+	`ImageUrl` VARCHAR(256),
+	`ImagePath` VARCHAR(256),
 	PRIMARY KEY (`ID`)
 ) 
 ENGINE = InnoDB;
@@ -68,7 +76,8 @@ CREATE TABLE IF NOT EXISTS `maaltijd` (
 	`Prijs` INT UNSIGNED  NOT NULL,
 	`UserID` INT UNSIGNED NOT NULL,
 	`StudentenhuisID` INT UNSIGNED NOT NULL,
-	`Image` LONGBLOB,
+	`ImageUrl` VARCHAR(256),
+	`ImagePath` VARCHAR(256),
 	PRIMARY KEY (`ID`)
 ) 
 ENGINE = InnoDB;
@@ -143,7 +152,7 @@ SELECT
 	`studentenhuis`.`Adres`,
 	`studentenhuis`.`Lat`,
 	`studentenhuis`.`Long`,
-	`studentenhuis`.`Image`,
+	`studentenhuis`.`ImageUrl`,
 	CONCAT(`user`.`Voornaam`, ' ', `user`.`Achternaam`) AS `Contact`,
 	`user`.`Email`
 FROM `studentenhuis`
@@ -162,7 +171,7 @@ SELECT
 	`user`.`Voornaam`,
 	`user`.`Achternaam`,
 	`user`.`Email`,
-	`user`.`Image`
+	`user`.`ImageUrl`
 FROM `deelnemers`
 LEFT JOIN `user` ON `deelnemers`.`UserID` = `user`.`ID`;
 

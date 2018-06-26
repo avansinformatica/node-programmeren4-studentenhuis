@@ -1,6 +1,8 @@
 //
-// Person class
+// User class
 //
+'use strict';
+
 const assert = require('assert')
 const ApiError = require('./ApiError')
 const bcrypt = require('bcryptjs');
@@ -9,7 +11,7 @@ const logger = require('../config/config').logger
 
 class User {
 
-    constructor(firstname, lastname, email, password) {
+    constructor(firstname, lastname, email, password, imageUrl) {
         logger.info('User constructor')
         // Verify that we only create valid Users
         try {
@@ -38,6 +40,7 @@ class User {
         this.email = email.trim()
         // Encrypt the password - never store a password as plain text!
         this.password = bcrypt.hashSync(password.trim(), 8); // Synchronous version
+        this.imageUrl = imageUrl || ''
     }
 
     // Other class functions here

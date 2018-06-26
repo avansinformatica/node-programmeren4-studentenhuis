@@ -1,3 +1,8 @@
+//
+// General Api errorhandling class
+//
+'use strict';
+
 class ApiError {
 
     constructor(message, code) {

@@ -1,6 +1,8 @@
 //
-// Person.routes.js
+// User routes
 //
+'use strict';
+
 let routes = require('express').Router()
 let UserController = require('../controllers/user.controller')
 

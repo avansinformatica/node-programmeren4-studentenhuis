@@ -1,12 +1,15 @@
 //
 // Authentication controller
 //
+'use strict';
+
 const assert = require('assert')
 const ApiError = require('../model/ApiError')
 const User = require('../model/User')
 const auth = require('../util/auth/authentication')
 const bcrypt = require('bcryptjs')
 const db = require('../config/db')
+const path = require('path')
 const validateEmail = require('../util/emailvalidator')
 const logger = require('../config/config').logger
 
@@ -85,7 +88,7 @@ module.exports = {
             return
         }
 
-        db.query('SELECT `ID`, `Email`, `Password` FROM user WHERE Email = ?', [req.body.email], (err, rows, fields) => {
+        db.query('SELECT `ID`, `Voornaam`, `Achternaam`, `Email`, `Password`, `ImageUrl` FROM `user` WHERE `Email` = ?', [req.body.email], (err, rows, fields) => {
             if (err) {
                 const error = new ApiError(err, 500)
                 next(error);
@@ -107,8 +110,9 @@ module.exports = {
                             // Userinfo returned to the caller.
                             const userinfo = {
                                 token: auth.encodeToken(payload),
+                                username: rows[0].Voornaam + ' ' + rows[0].Achternaam,
                                 email: rows[0].Email,
-                                userid: rows[0].ID
+                                imageUrl: rows[0].ImageUrl
                             }
                             res.status(200).json(userinfo).end()
                         } else {
@@ -124,7 +128,7 @@ module.exports = {
     },
 
     /**
-     * Register a new user. The user should provide a firstname, lastname, emailaddress and 
+     * Register a new user. The user should provide a Voornaam, Achternaam, emailaddress and 
      * password. The emailaddress should be unique when it exists, an error must be thrown.
      * The password will be encrypted by the User class and must never be stored as plain text! 
      * 
@@ -135,6 +139,7 @@ module.exports = {
     register(req, res, next) {
         // logger.info('register')
         // logger.info(req.body)
+
         try {
             assert(typeof (req.body.firstname) === 'string', 'firstname must be a string.')
             assert(typeof (req.body.lastname) === 'string', 'lastname must be a string.')
@@ -150,7 +155,10 @@ module.exports = {
             return
         }
 
-        db.query('SELECT `Email` FROM user WHERE Email = ?', [req.body.email], (err, rows, fields) => {
+        /**
+         * Query the database to see if the email of the user to be registered already exists.
+         */
+        db.query('SELECT `Email` FROM `user` WHERE `Email` = ?', [req.body.email], (err, rows, fields) => {
             if (err) {
                 const error = new ApiError(err, 412)
                 next(error);
@@ -170,12 +178,13 @@ module.exports = {
                             req.body.firstname,
                             req.body.lastname,
                             req.body.email,
-                            req.body.password
+                            req.body.password,
+                            req.body.imageUrl
                         )
                         logger.info(user)
 
-                        db.query('INSERT INTO `user` (Voornaam, Achternaam, Email, Password, Image) VALUES (?, ?, ?, ?, ?)', 
-                            [user.name.firstname, user.name.lastname, user.email, user.password, req.body.image],
+                        db.query('INSERT INTO `user` (`Voornaam`, `Achternaam`, `Email`, `Password`, `ImageUrl`, `ImagePath`) VALUES (?, ?, ?, ?, ?, ?)', 
+                            [user.name.firstname, user.name.lastname, user.email, user.password, user.imageUrl || '', req.body.filepath],
                             (err, rows, fields) => {
                                 if (err) {
                                     const error = new ApiError(err, 412)
@@ -189,8 +198,9 @@ module.exports = {
                                     // Userinfo returned to the caller.
                                     const userinfo = {
                                         token: auth.encodeToken(payload),
+                                        username: user.name.firstname + ' ' + user.name.lastname,
                                         email: user.email,
-                                        userid: rows.insertId
+                                        imageUrl: path.normalize(user.imageUrl)
                                     }
                                     res.status(200).json(userinfo).end()
                                 }

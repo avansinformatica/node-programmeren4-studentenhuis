@@ -1,9 +1,12 @@
+'use strict';
+
 const express = require('express')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const user_routes = require('./routes/user.routes')
 const authenticationroutes = require('./routes/authentication.routes')
 const studentenhuisroutes = require('./routes/studentenhuis.routes')
+const studentenhuis_open_routes = require('./routes/studentenhuis.open.routes')
 const AuthController = require('./controllers/authentication.controller')
 const ApiError = require('./model/ApiError')
 const settings = require('./config/config')
@@ -49,7 +52,15 @@ let options = {
 expressSwagger(options)
 
 // bodyParser parses the body from a request
-app.use(bodyParser.json())
+// hierin zit de inhoud van een POST request.
+app.use(bodyParser.urlencoded({
+	'extended': 'true'
+})); 
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.json()); // parse application/json
+app.use(bodyParser.json({
+	type: 'application/vnd.api+json'
+})); // parse application/vnd.api+json as json
 
 // Instal Morgan as logger
 app.use(morgan('dev'))
@@ -63,19 +74,18 @@ app.use(function (req, res, next) {
 	next();
 });
 
-// Preprocessing catch-all endpoint
-// The perfect place to check that the user performing the request 
-// has authorisation to do things on our server
-app.use('*', function (req, res, next) {
-	next()
-})
+// Serve files from the ./static folder 
+app.use(express.static('./static'))
 
 // UNPROTECTED endpoints for authentication - no token required.
 // Provide login and registration 
 app.use('/api', authenticationroutes)
 
+// GET routes are UNPROTECTED
+app.use('/api', studentenhuis_open_routes)
+
 // JWT TOKEN VALIDATION for authentication
-app.all('*', AuthController.validateToken);
+app.all('/api', AuthController.validateToken);
 
 // PROTECTED endpoints
 app.use('/api', user_routes)

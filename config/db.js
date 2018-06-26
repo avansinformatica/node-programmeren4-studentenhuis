@@ -3,6 +3,8 @@
 //
 // Configuratiebestand voor MySql database.
 //
+'use strict';
+
 const mysql = require('mysql')
 const config = require('../config/config')
 const logger = config.logger
@@ -11,7 +13,7 @@ const reconnectTimeout = 2000 // ms.
 const connectionSettings = {
     host: process.env.DB_HOST || config.dbHost,
     user: process.env.DB_USER || config.dbUser,
-    password: process.env.DB_PASSWORD || config.dbPassword,
+    password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE || config.dbDatabase,
     port: 3306,
     debug: false
