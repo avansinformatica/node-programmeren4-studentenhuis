@@ -3,6 +3,8 @@
 //
 // Configuratiebestand voor MySql database.
 //
+'use strict';
+
 const mysql = require('mysql')
 const config = require('../config/config')
 const logger = config.logger

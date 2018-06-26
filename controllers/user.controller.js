@@ -1,6 +1,8 @@
 //
 // CRUD operations on person
 //
+'use strict';
+
 const User = require('../model/User')
 const ApiError = require('../model/ApiError')
 const assert = require('assert')

@@ -1,6 +1,8 @@
 //
-// Person class
+// User class
 //
+'use strict';
+
 const assert = require('assert')
 const ApiError = require('./ApiError')
 const bcrypt = require('bcryptjs');

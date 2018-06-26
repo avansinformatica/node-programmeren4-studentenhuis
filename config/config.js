@@ -1,6 +1,7 @@
 //
 // Application configuration
 //
+'use strict';
 
 // Set the logging level.
 const loglevel = process.env.LOGLEVEL || 'debug'

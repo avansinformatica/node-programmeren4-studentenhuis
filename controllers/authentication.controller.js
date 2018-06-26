@@ -1,6 +1,8 @@
 //
 // Authentication controller
 //
+'use strict';
+
 const assert = require('assert')
 const ApiError = require('../model/ApiError')
 const User = require('../model/User')

@@ -1,6 +1,8 @@
 //
 // Upload controller - handles file uploads
 //
+'use strict';
+
 const assert = require('assert')
 const ApiError = require('../model/ApiError')
 const logger = require('../config/config').logger

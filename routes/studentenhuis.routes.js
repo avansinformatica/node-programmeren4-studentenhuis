@@ -1,6 +1,8 @@
 //
 // routes.js
 //
+'use strict';
+
 let routes = require('express').Router()
 const StudentenhuisController = require('../controllers/studentenhuis.controller')
 const MaaltijdController = require('../controllers/maaltijd.controller')
