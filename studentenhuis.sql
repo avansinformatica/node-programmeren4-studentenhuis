@@ -2,13 +2,19 @@ DROP DATABASE IF EXISTS `studentenhuis`;
 CREATE DATABASE `studentenhuis`;
 USE `studentenhuis`;
 
+--
+-- Uncomment de volgende SQL statements om een user in de database te maken
+-- Vanwege security mag je die user alleen in je lokale ontwikkeldatabase aanmaken!
+-- Op een remote 'productie'-server moet je zorgen voor een ANDER useraccount!
+-- Vanuit je (bv. nodejs) applicatie stel je de credentials daarvan in via environment variabelen.
+--
 -- studentenhuis_user aanmaken
-CREATE USER 'studentenhuis_user'@'%' IDENTIFIED BY 'secret';
-CREATE USER 'studentenhuis_user'@'localhost' IDENTIFIED BY 'secret';
+-- CREATE USER 'studentenhuis_user'@'%' IDENTIFIED BY 'secret';
+-- CREATE USER 'studentenhuis_user'@'localhost' IDENTIFIED BY 'secret';
 
 -- geef rechten aan deze user
-GRANT SELECT, INSERT, DELETE, UPDATE ON `studentenhuis`.* TO 'studentenhuis_user'@'%';
-GRANT SELECT, INSERT, DELETE, UPDATE ON `studentenhuis`.* TO 'studentenhuis_user'@'localhost';
+-- GRANT SELECT, INSERT, DELETE, UPDATE ON `studentenhuis`.* TO 'studentenhuis_user'@'%';
+-- GRANT SELECT, INSERT, DELETE, UPDATE ON `studentenhuis`.* TO 'studentenhuis_user'@'localhost';
 
 -- -----------------------------------------------------
 -- Table `users`

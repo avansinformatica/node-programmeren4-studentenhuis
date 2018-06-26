@@ -5,15 +5,15 @@
 
 // Set the logging level.
 const loglevel = process.env.LOGLEVEL || 'debug'
+const secretkey = process.env.SECRETKEY
 
 module.exports = {
-    "secretkey": "MySuperDuperSecretKey-123454321AbCd",
+    secretkey: secretkey,
 
-    "dbHost": "localhost",
-    "dbUser": "studentenhuis_user",
-    "dbDatabase": "studentenhuis",
-    "dbPassword": "secret",
-    "webPort": "3000",
+    dbHost: 'localhost',
+    dbUser: 'studentenhuis_user',
+    dbDatabase: 'studentenhuis',
+    webPort: 3000,
 
     logger: require('tracer')
         .console({
