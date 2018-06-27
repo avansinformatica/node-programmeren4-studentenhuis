@@ -5,6 +5,8 @@
 
 const User = require('../model/User')
 const ApiError = require('../model/ApiError')
+const auth = require('../util/auth/authentication')
+const db = require('../config/db')
 const assert = require('assert')
 const logger = require('../config/config').logger
 
@@ -128,20 +130,55 @@ module.exports = {
             next(error)
             return
         }
+    },
 
-        // Delete this person
-        // const removedPerson = personlist.splice(id, 1)
-        // if (removedPerson.length === 1) {
-        //     // Success; status = 200
-        //     // Don't forget: delete the password!
-        //     delete removedPerson.password
-        //     res.status(200).json(removedPerson.toString()).end();
-        // } else {
-        //     // Fail -> next(error)
-        //     let error = {
-        //         message: "User was not found"
-        //     }
-        //     next(error)
-        // }
+    /**
+     * Return the token, username, user email and user profile picture url. 
+     * 
+     * @param {object} req 
+     * @param {object} res 
+     * @param {function} next 
+     */
+    getUserProfile(req, res, next) {
+
+        logger.trace("getUserProfile")
+        const ID = req.user.id
+        logger.trace("req.user.id = ", ID)
+
+        try {
+            const sqlQuery = 'SELECT CONCAT(`user`.`Voornaam`, \' \', `user`.`Achternaam`) AS `Fullname`,' + 
+                '`user`.`Email`, `user`.`ImageURL` ' +
+                'FROM `user` WHERE `ID` = ?'
+            db.query(sqlQuery, [ID], (err, rows, fields) => {
+                if (err) {
+                    const error = new ApiError(err, 500)
+                    next(error);
+                } else {
+                    if(rows.length !== 1) {
+                        const error = new ApiError(err, 400)
+                        next(error);
+                    } else {
+                        // Create an object containing the data we want in the payload.
+                        const payload = {
+                            user: rows[0].Email,
+                            id: ID
+                        }
+                        // Userinfo returned to the caller.
+                        const userinfo = {
+                            token: auth.encodeToken(payload),
+                            username: rows[0].Fullname,
+                            email: rows[0].Email, 
+                            imageUrl: rows[0].ImageURL 
+                        }
+                        res.status(200).json(userinfo).end()
+                    }
+                }
+            })
+        } catch (ex) {
+            logger.error(ex)
+            const error = new ApiError(ex, 412)
+            next(error);
+        }
     }
+
 }

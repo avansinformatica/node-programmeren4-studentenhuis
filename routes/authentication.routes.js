@@ -51,7 +51,7 @@ const UploadController = require('../controllers/upload.controller')
 routes.post('/login', AuthController.login)
 
 /**
- * Registreer een nieuwe gebruikers. Het emailadres van de gebruiker is uniek.
+ * Registreer een nieuwe gebruiker. Het emailadres van de gebruiker is uniek.
  * Een gebruiker kan zich dus slechts 1 maal aanmelden met een emailadres. 
  * Vereist een JSON object in de request body, met daarin de properties 
  * firstname, lastname, email en password. Deze zijn hieronder beschreven.
