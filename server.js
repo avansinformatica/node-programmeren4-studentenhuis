@@ -85,7 +85,7 @@ app.use('/api', authenticationroutes)
 app.use('/api', studentenhuis_open_routes)
 
 // JWT TOKEN VALIDATION for authentication
-app.all('/api', AuthController.validateToken);
+app.use('/api', AuthController.validateToken);
 
 // PROTECTED endpoints
 app.use('/api', user_routes)

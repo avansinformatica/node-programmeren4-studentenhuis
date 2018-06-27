@@ -80,7 +80,7 @@ const UploadController = require('../controllers/upload.controller')
  * @returns {ApiError.model}  401 - Niet geautoriseerd (geen valid token)
  * @returns {ApiError.model}  412 - Een of meer properties in de request body ontbreken of zijn foutief 
  */
-routes.post('/studentenhuis', UploadController.handleUploadForm, StudentenhuisController.create)
+routes.post('/studentenhuis', StudentenhuisController.create)
 
 /**
  * Vervang het studentenhuis met de gegeven huisId door de informatie van het studentenhuis 

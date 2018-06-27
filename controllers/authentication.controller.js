@@ -26,7 +26,7 @@ module.exports = {
      * @param {*} next ApiError when token is invalid, or req containing logged-in user.
      */
     validateToken(req, res, next) {
-        // logger.info('validateToken called')
+        logger.debug('validateToken called')
 
         /**
          * A token can be sent in the body of a request, via a query parameter (in the URL),
@@ -37,6 +37,7 @@ module.exports = {
         auth.decodeToken(token, (err, payload) => {
             if (err) {
                 // Invalid token
+                logger.error('auth.decode - ' + err.message || err)
                 const error = new ApiError(err.message || err, 401)
                 next(error)
             } else {
@@ -55,6 +56,7 @@ module.exports = {
                 req.user = {
                     id: payload.sub.id
                 }
+                logger.debug('req.user = ', req.user)
                 next()
             }
         })
