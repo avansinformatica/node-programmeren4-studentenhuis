@@ -48,7 +48,7 @@ module.exports = {
                 })
         } catch (ex) {
             logger.error(ex)
-            const error = new ApiError(ex, 412)
+            const error = new ApiError(ex, 500)
             next(error);
         }
     },
@@ -78,7 +78,7 @@ module.exports = {
                 })
         } catch (ex) {
             logger.error(ex)
-            const error = new ApiError(ex, 412)
+            const error = new ApiError(ex, 500)
             next(error);
         }
     },
@@ -88,7 +88,7 @@ module.exports = {
      * Natuurlijk alleen als je aangemeld bent.
      */
     delete(req, res, next) {
-        res.status(200).json({
+        res.status(400).json({
             msg: 'Not implemented yet!'
         }).end()
     }
