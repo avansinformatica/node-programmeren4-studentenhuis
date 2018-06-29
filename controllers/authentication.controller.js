@@ -8,7 +8,7 @@ const ApiError = require('../model/ApiError')
 const User = require('../model/User')
 const auth = require('../util/auth/authentication')
 const bcrypt = require('bcryptjs')
-const db = require('../config/db')
+const pool = require('../config/db')
 const path = require('path')
 const validateEmail = require('../util/emailvalidator')
 const logger = require('../config/config').logger
@@ -90,42 +90,51 @@ module.exports = {
             return
         }
 
-        db.query('SELECT `ID`, `Voornaam`, `Achternaam`, `Email`, `Password`, `ImageUrl` FROM `user` WHERE `Email` = ?', [req.body.email], (err, rows, fields) => {
-            if (err) {
+        pool.getConnection((err, connection) => {
+            if(err) {
+                logger.error('Error getting connection from pool: ' + err.toString())
                 const error = new ApiError(err, 500)
                 next(error);
-            } else {
-                // Login kan alleen als het emailadres bestaat
-                // Was er een resultaat? Zo ja, check het password.
-                // logger.info('Result from database: ')
-                // logger.info(rows)
-                // logger.info('password = ' + rows[0].Password)
-                if (rows && rows.length === 1 && rows[0].Email !== undefined) {
-                    bcrypt.compare(req.body.password, rows[0].Password, (err, success) => {
-                        if (success) {
-                            logger.info('passwords DID match, sending valid token')
-                            // Create an object containing the data we want in the payload.
-                            const payload = {
-                                user: rows[0].Email,
-                                id: rows[0].ID
-                            }
-                            // Userinfo returned to the caller.
-                            const userinfo = {
-                                token: auth.encodeToken(payload),
-                                username: rows[0].Voornaam + ' ' + rows[0].Achternaam,
-                                email: rows[0].Email,
-                                imageUrl: rows[0].ImageUrl
-                            }
-                            res.status(200).json(userinfo).end()
-                        } else {
-                            next(new ApiError('Password did not match.', 401))
-                        }
-                    })
-                } else {
-                    next(new ApiError('Email does not exist.', 401))
-                }
-
+                return
             }
+            connection.query('SELECT `ID`, `Voornaam`, `Achternaam`, `Email`, `Password`, `ImageUrl` FROM `user` WHERE `Email` = ?', [req.body.email], (err, rows, fields) => {
+                connection.release()
+                if (err) {
+                    const error = new ApiError(err, 500)
+                    next(error);
+                } else {
+                    // Login kan alleen als het emailadres bestaat
+                    // Was er een resultaat? Zo ja, check het password.
+                    // logger.info('Result from database: ')
+                    // logger.info(rows)
+                    // logger.info('password = ' + rows[0].Password)
+                    if (rows && rows.length === 1 && rows[0].Email !== undefined) {
+                        bcrypt.compare(req.body.password, rows[0].Password, (err, success) => {
+                            if (success) {
+                                logger.info('passwords DID match, sending valid token')
+                                // Create an object containing the data we want in the payload.
+                                const payload = {
+                                    user: rows[0].Email,
+                                    id: rows[0].ID
+                                }
+                                // Userinfo returned to the caller.
+                                const userinfo = {
+                                    token: auth.encodeToken(payload),
+                                    username: rows[0].Voornaam + ' ' + rows[0].Achternaam,
+                                    email: rows[0].Email,
+                                    imageUrl: rows[0].ImageUrl
+                                }
+                                res.status(200).json(userinfo).end()
+                            } else {
+                                next(new ApiError('Password did not match.', 401))
+                            }
+                        })
+                    } else {
+                        next(new ApiError('Email does not exist.', 401))
+                    }
+
+                }
+            })
         })
     },
 
@@ -160,58 +169,67 @@ module.exports = {
         /**
          * Query the database to see if the email of the user to be registered already exists.
          */
-        db.query('SELECT `Email` FROM `user` WHERE `Email` = ?', [req.body.email], (err, rows, fields) => {
+        pool.getConnection((err, connection) => {
             if (err) {
-                const error = new ApiError(err, 412)
+                logger.error('Error getting connection from pool: ' + err.toString())
+                const error = new ApiError(err, 500)
                 next(error);
-            } else {
-                // logger.info('found results')
-                // logger.info(rows)
-
-                if (rows.length > 0) {
-                    const error = new ApiError('Email already exists', 412)
+                return
+            }
+            connection.query('SELECT `Email` FROM `user` WHERE `Email` = ?', [req.body.email], (err, rows, fields) => {
+                if (err) {
+                    const error = new ApiError(err, 412)
                     next(error);
                 } else {
-                    /**
-                     * User constructor could throw an exception
-                     */
-                    try {
-                        const user = new User(
-                            req.body.firstname,
-                            req.body.lastname,
-                            req.body.email,
-                            req.body.password,
-                            req.body.imageUrl
-                        )
-                        logger.info(user)
+                    // logger.info('found results')
+                    // logger.info(rows)
 
-                        db.query('INSERT INTO `user` (`Voornaam`, `Achternaam`, `Email`, `Password`, `ImageUrl`, `ImagePath`) VALUES (?, ?, ?, ?, ?, ?)', 
-                            [user.name.firstname, user.name.lastname, user.email, user.password, user.imageUrl || '', req.body.filepath],
-                            (err, rows, fields) => {
-                                if (err) {
-                                    const error = new ApiError(err, 412)
-                                    next(error);
-                                } else {
-                                    // Create an object containing the data we want in the payload.
-                                    const payload = {
-                                        user: user.email,
-                                        id: rows.insertId
+                    if (rows.length > 0) {
+                        const error = new ApiError('Email already exists', 412)
+                        next(error);
+                    } else {
+                        /**
+                         * User constructor could throw an exception
+                         */
+                        try {
+                            const user = new User(
+                                req.body.firstname,
+                                req.body.lastname,
+                                req.body.email,
+                                req.body.password,
+                                req.body.imageUrl
+                            )
+                            logger.info(user)
+
+                            connection.query('INSERT INTO `user` (`Voornaam`, `Achternaam`, `Email`, `Password`, `ImageUrl`, `ImagePath`) VALUES (?, ?, ?, ?, ?, ?)', 
+                                [user.name.firstname, user.name.lastname, user.email, user.password, user.imageUrl || '', req.body.filepath],
+                                (err, rows, fields) => {
+                                    connection.release()
+                                    if (err) {
+                                        const error = new ApiError(err, 412)
+                                        next(error);
+                                    } else {
+                                        // Create an object containing the data we want in the payload.
+                                        const payload = {
+                                            user: user.email,
+                                            id: rows.insertId
+                                        }
+                                        // Userinfo returned to the caller.
+                                        const userinfo = {
+                                            token: auth.encodeToken(payload),
+                                            username: user.name.firstname + ' ' + user.name.lastname,
+                                            email: user.email,
+                                            imageUrl: path.normalize(user.imageUrl)
+                                        }
+                                        res.status(200).json(userinfo).end()
                                     }
-                                    // Userinfo returned to the caller.
-                                    const userinfo = {
-                                        token: auth.encodeToken(payload),
-                                        username: user.name.firstname + ' ' + user.name.lastname,
-                                        email: user.email,
-                                        imageUrl: path.normalize(user.imageUrl)
-                                    }
-                                    res.status(200).json(userinfo).end()
-                                }
-                            })
-                    } catch (ex) {
-                        next(ex)
+                                })
+                        } catch (ex) {
+                            next(ex)
+                        }
                     }
                 }
-            }
+            })
         })
     }
 

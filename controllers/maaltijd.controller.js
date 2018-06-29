@@ -5,7 +5,7 @@
 
 const ApiError = require('../model/ApiError')
 const assert = require('assert')
-const db = require('../config/db')
+const pool = require('../config/db')
 const logger = require('../config/config').logger
 
 module.exports = {
@@ -28,8 +28,16 @@ module.exports = {
             const userId = req.user.id
             const query = 'INSERT INTO `maaltijd` (Naam, Beschrijving, Ingredienten, Allergie, Prijs, UserID, StudentenhuisID) VALUES (?, ?, ?, ?, ?, ?, ?)'
             const values = [req.body.naam, req.body.beschrijving, req.body.ingredienten, req.body.allergie, req.body.prijs, userId, huisId]
-            db.query(query, values,
+            pool.getConnection((err, connection) => {
+                if (err) {
+                    logger.error('Error getting connection from pool: ' + err.toString())
+                    const error = new ApiError(err, 500)
+                    next(error);
+                    return
+                }
+                connection.query(query, values,
                 (err, rows, fields) => {
+                    connection.release()
                     if (err) {
                         const error = new ApiError(err, 412)
                         next(error);
@@ -39,6 +47,7 @@ module.exports = {
                         }).end()
                     }
                 })
+            })
         } catch (ex) {
             logger.error(ex)
             const error = new ApiError(ex, 500)
@@ -55,8 +64,15 @@ module.exports = {
             const huisId = req.params.huisId
             const query = 'SELECT ID, Naam, Beschrijving, Ingredienten, Allergie, Prijs FROM maaltijd WHERE StudentenhuisID = ?'
             const values = [huisId]
-            db.query(query, values,
-                (err, rows, fields) => {
+            pool.getConnection((err, connection) => {
+                if (err) {
+                    logger.error('Error getting connection from pool: ' + err.toString())
+                    const error = new ApiError(err, 500)
+                    next(error);
+                    return
+                }
+                connection.query(query, (err, rows, fields) => {
+                    connection.release()
                     if (err) {
                         const error = new ApiError(err, 412)
                         next(error);
@@ -64,6 +80,7 @@ module.exports = {
                         res.status(200).json({result: rows}).end()
                     }
                 })
+            })
         } catch (ex) {
             logger.error(ex)
             const error = new ApiError(ex, 500)
@@ -82,8 +99,15 @@ module.exports = {
             const maaltijdId = req.params.maaltijdId
             const query = 'SELECT ID, Naam, Beschrijving, Ingredienten, Allergie, Prijs FROM maaltijd WHERE StudentenhuisID = ? AND ID = ?'
             const values = [huisId, maaltijdId]
-            db.query(query, values,
-                (err, rows, fields) => {
+            pool.getConnection((err, connection) => {
+                if (err) {
+                    logger.error('Error getting connection from pool: ' + err.toString())
+                    const error = new ApiError(err, 500)
+                    next(error);
+                    return
+                }
+                connection.query(query, values, (err, rows, fields) => {
+                    connection.release()
                     if (err) {
                         const error = new ApiError(err, 412)
                         next(error);
@@ -95,6 +119,7 @@ module.exports = {
                         res.status(200).json({result: rows[0]}).end()
                     }
                 })
+            })
         } catch (ex) {
             logger.error(ex)
             const error = new ApiError(ex, 500)

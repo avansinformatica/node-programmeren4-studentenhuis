@@ -5,7 +5,7 @@
 
 const ApiError = require('../model/ApiError')
 const assert = require('assert')
-const db = require('../config/db')
+const pool = require('../config/db')
 const logger = require('../config/config').logger
 
 module.exports = {
@@ -30,8 +30,15 @@ module.exports = {
             const userId = req.user.id
             const query = 'INSERT INTO `deelnemers` (UserID, StudentenhuisID, MaaltijdID) VALUES (?, ?, ?)'
             const values = [userId, huisId, maaltijdId]
-            db.query(query, values,
-                (err, rows, fields) => {
+            pool.getConnection((err, connection) => {
+                if (err) {
+                    logger.error('Error getting connection from pool: ' + err.toString())
+                    const error = new ApiError(err, 500)
+                    next(error);
+                    return
+                }
+                connection.query(query, values, (err, rows, fields) => {
+                    connection.release()
                     if (err) {
                         let error;
                         if (err.code && err.code === 'ER_DUP_ENTRY') {
@@ -46,6 +53,7 @@ module.exports = {
                         }).end()
                     }
                 })
+            })
         } catch (ex) {
             logger.error(ex)
             const error = new ApiError(ex, 500)
@@ -63,8 +71,15 @@ module.exports = {
             const maaltijdId = req.params.maaltijdId
             const query = 'SELECT Voornaam, Achternaam, Email FROM view_deelnemers WHERE StudentenhuisID = ? AND MaaltijdID = ?'
             const values = [huisId, maaltijdId]
-            db.query(query, values,
-                (err, rows, fields) => {
+            pool.getConnection((err, connection) => {
+                if (err) {
+                    logger.error('Error getting connection from pool: ' + err.toString())
+                    const error = new ApiError(err, 500)
+                    next(error);
+                    return
+                }
+                connection.query(query, values, (err, rows, fields) => {
+                    connection.release()
                     if (err) {
                         const error = new ApiError(err, 412)
                         next(error);
@@ -76,6 +91,7 @@ module.exports = {
                         res.status(200).json({result: rows}).end()
                     }
                 })
+            })
         } catch (ex) {
             logger.error(ex)
             const error = new ApiError(ex, 500)

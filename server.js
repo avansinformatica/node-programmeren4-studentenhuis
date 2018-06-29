@@ -11,7 +11,7 @@ const AuthController = require('./controllers/authentication.controller')
 const ApiError = require('./model/ApiError')
 const settings = require('./config/config')
 const logger = settings.logger
-const db = require('./config/db');
+const pool = require('./config/db');
 
 const port = process.env.PORT || settings.webPort
 const httpSchemes = process.env.NODE_ENV === 'production' ? ['https'] : ['http']
@@ -104,6 +104,31 @@ app.use((err, req, res, next) => {
 	logger.error(err)
 	res.status((err.code || 404)).json(err).end()
 })
+
+//
+// When this server shuts down, we gracefully clean up all the mess behind us.
+// This is where we release the database pool.
+//
+function shutdown() {
+	logger.info('shutdown started')
+	// app.stop()
+	// 	.then(() => {
+			pool.end((err) => {
+				if (err) {
+					logger.info('Error releasing connection in the database pool: ' + err.toString())
+					process.exit()
+				} else {
+					logger.info('All connections in the pool have ended')
+					process.exit()
+				}
+			})
+		// })
+		// .then(() => {
+		// 	logger.info('process is stopping')
+		// })
+}
+process.on('SIGTERM', shutdown)
+process.on('SIGINT', shutdown)
 
 // Start listening for incoming requests.
 app.listen(port, () => {

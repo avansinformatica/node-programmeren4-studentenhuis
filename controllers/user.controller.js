@@ -6,7 +6,7 @@
 const User = require('../model/User')
 const ApiError = require('../model/ApiError')
 const auth = require('../util/auth/authentication')
-const db = require('../config/db')
+const pool = require('../config/db')
 const assert = require('assert')
 const logger = require('../config/config').logger
 
@@ -149,30 +149,39 @@ module.exports = {
             const sqlQuery = 'SELECT CONCAT(`user`.`Voornaam`, \' \', `user`.`Achternaam`) AS `Fullname`,' + 
                 '`user`.`Email`, `user`.`ImageURL` ' +
                 'FROM `user` WHERE `ID` = ?'
-            db.query(sqlQuery, [ID], (err, rows, fields) => {
+            pool.getConnection((err, connection) => {
                 if (err) {
+                    logger.error('Error getting connection from pool: ' + err.toString())
                     const error = new ApiError(err, 500)
                     next(error);
-                } else {
-                    if(rows.length !== 1) {
-                        const error = new ApiError(err, 400)
+                    return
+                }
+                connection.query(sqlQuery, [ID], (err, rows, fields) => {
+                    connection.release()
+                    if (err) {
+                        const error = new ApiError(err, 500)
                         next(error);
                     } else {
-                        // Create an object containing the data we want in the payload.
-                        const payload = {
-                            user: rows[0].Email,
-                            id: ID
+                        if(rows.length !== 1) {
+                            const error = new ApiError(err, 400)
+                            next(error);
+                        } else {
+                            // Create an object containing the data we want in the payload.
+                            const payload = {
+                                user: rows[0].Email,
+                                id: ID
+                            }
+                            // Userinfo returned to the caller.
+                            const userinfo = {
+                                token: auth.encodeToken(payload),
+                                username: rows[0].Fullname,
+                                email: rows[0].Email, 
+                                imageUrl: rows[0].ImageURL 
+                            }
+                            res.status(200).json(userinfo).end()
                         }
-                        // Userinfo returned to the caller.
-                        const userinfo = {
-                            token: auth.encodeToken(payload),
-                            username: rows[0].Fullname,
-                            email: rows[0].Email, 
-                            imageUrl: rows[0].ImageURL 
-                        }
-                        res.status(200).json(userinfo).end()
                     }
-                }
+                })
             })
         } catch (ex) {
             logger.error(ex)

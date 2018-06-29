@@ -4,7 +4,7 @@
 'use strict';
 
 // Set the logging level.
-const loglevel = process.env.LOGLEVEL || 'debug'
+const loglevel = process.env.LOGLEVEL || 'trace'
 const secretkey = process.env.SECRETKEY
 
 module.exports = {

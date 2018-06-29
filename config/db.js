@@ -1,5 +1,5 @@
 //
-// ./config/connection.js
+// ./config/pool.js
 //
 // Configuratiebestand voor MySql database.
 //
@@ -11,6 +11,7 @@ const logger = config.logger
 const reconnectTimeout = 2000 // ms.
 
 const connectionSettings = {
+    connectionLimit: 20,
     host: process.env.DB_HOST || config.dbHost,
     user: process.env.DB_USER || config.dbUser,
     password: process.env.DB_PASSWORD,
@@ -19,34 +20,26 @@ const connectionSettings = {
     debug: false
 }
 
-var connection
+var pool
 
 // http://sudoall.com/node-js-handling-mysql-disconnects/
-function handleDisconnect() {
-    connection = mysql.createConnection(connectionSettings)
+// function handleDisconnect() {
+pool = mysql.createPool(connectionSettings)
 
-    connection.connect((error) => {
-        if (error) {
-            logger.warn('Error connecting to database \'' + connectionSettings.database + '\' on \'' + connectionSettings.host + '\': ' + error.message)
-            connection.end()
-            setTimeout(handleDisconnect, reconnectTimeout)
-        } else {
-            logger.info('Connected to database \'' + connectionSettings.database + '\' on \'' + connectionSettings.host + '\', state = ' + connection.state)
-        }
-    })
-    connection.on('error', (error) => {
-        if (error.code === 'ECONNRESET') {
-            logger.warn('Connection state = ' + connection.state + ' - reconnecting')
-            connection.end()
-            handleDisconnect()
-        } else {
-            logger.error('Connection ERROR - database \'' + connectionSettings.database + '\' on \'' + connectionSettings.host + '\': ' + error.message)
-            connection.end()
-            handleDisconnect()
-        }
-    })
-}
+pool.on('acquire', (connection) => {
+    logger.trace('Connection %d acquired', connection.threadId)
+})
 
-handleDisconnect()
+pool.on('connection', (connection) => {
+    logger.trace('Connection to database was made')
+})
 
-module.exports = connection
+pool.on('enqueue', () => {
+    logger.trace('Waiting for available connection slot')
+})
+
+pool.on('release', (connection) => {
+    logger.trace('Connection %d released', connection.threadId)
+})
+
+module.exports = pool
