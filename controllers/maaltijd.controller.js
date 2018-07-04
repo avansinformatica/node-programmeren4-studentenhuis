@@ -35,8 +35,7 @@ module.exports = {
                     next(error);
                     return
                 }
-                connection.query(query, values,
-                (err, rows, fields) => {
+                connection.query(query, values, (err, rows, fields) => {
                     connection.release()
                     if (err) {
                         const error = new ApiError(err, 412)
